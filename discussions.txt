@@ -1,0 +1,36 @@
+For every milestone, ensure this structure:
+
+Purpose (why this milestone exists)
+Method (what you did)
+Theory (how it works conceptually)
+Observations (what you saw)
+Implications (why it matters for the next milestone)
+
+
+predictive analytics case study
+Introduction:
+What was the problem being solved?
+Why was this problem important to solve?
+How was the data acquired?
+
+Methods and Results:
+What steps were taken to prepare the data?
+How was this problem solved?
+What modeling techniques were used?
+Why did the team choose the methods/models they did?
+What metrics were used to evaluate the results? Why was this metric chosen?
+
+Conclusion:
+How were the results or model implemented?
+What were the actionable consequences of the case study?
+What did the team learn from the case study?
+How should or would the team approach the problem differently in the future?
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+How do you model? How do you deploy and operationalize a model?
+What is uplift modeling?
+How do you deploy a model? Why is it hard? What do you need to consider?
+How does cost play a role in deploying/operationalizing a model?
+Why should models be rebuilt?
+ Discuss five aspects, in terms of predictive analytics, that were critical to the success of the project.
+
