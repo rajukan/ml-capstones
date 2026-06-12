@@ -1,0 +1,350 @@
+Project Description
+
+You have been a data scientist since the day you began this program. You may not have recognized it, but it’s been there the whole time. In this course, you’re not only going to recognize it, but also show us what you can do.
+You will be performing 3 analyses and presentations of data that is useful to you, or interesting enough to examine. Here are the parameters of each of the deliverables
+All due dates are Sunday evening.
+Each of these projects are domain agnostic, data agnostic, and method agnostic. This means that you can pull data from any domain, analyze it using whatever method you deem worthy, and use data that already exists in any form. The suggestion would be to work on projects that are more than just EDA - instead follow the end to end data science process, which would include modeling.
+What you will be doing with your data, method, and domain is providing a useful analysis to those who work in that domain. You will have to define it, show it, and visualize it in a useful, jargon free story.
+The schedule for these projects is as follows:
+Weeks 1 – 4 – The First Project 
+
+Week 1/Milestone 1 – Proposal and Data Selection
+See template below
+Find your Data Source
+Write your research questions, along with any potential ethical implications
+Propose your project.
+Week 2 - Work on Project
+Week 3/Milestone 2 – Draft of White Paper
+See template below
+3-5 pages (illustrations do not count toward page count)
+APA References.
+Include at least 3-5 illustrations (not included in page count)
+1 Appendix (Supporting documentation)
+10 Questions an audience would ask you (Answer in Milestone 4)
+Week 4/Milestone 3 – Presentation
+Must be a recorded presentation with audio - recording video is optional
+Submit a presentation with audio
+Your final white paper
+Questions/answers you came up with that you would be asked by the audience
+Code (a link to GitHub will also work)
+
+
+Weeks 5 – 8 – The Second Project 
+
+Week 5/Milestone 1 – Proposal and Data Selection
+See template below
+Find your Data Source
+Write your research questions, along with any potential ethical implications
+Propose your project
+Week 6 - Work on Project
+Week 7/Milestone 2 – Draft of White Paper
+See template below
+3-5 pages (illustrations do not count toward page count)
+APA References.
+Include at least 3-5 illustrations (not included in page count)
+1 Appendix (Supporting documentation)
+10 Questions an audience would ask you (Answer in Milestone 4)
+Week 8/Milestone 3 – Presentation
+Must be a recorded presentation with audio - recording video is optional
+Submit a presentation with audio:
+Your final white paper
+Questions/answers you came up with that you would be asked by the audience
+Code (a link to GitHub will also work)
+Weeks 9 – 11 – The Third Project 
+
+Week 9/Milestone 1 – Proposal and Data Selection
+See template below
+Find your Data Source
+Write your research questions, along with any potential ethical implications
+Propose your project.
+Week 10/Milestone 2 – Draft of White Paper
+See template below
+3-5 pages (illustrations do not count toward page count)
+APA References.
+Include at least 3-5 illustrations (not included in page count)
+1 Appendix (Supporting documentation)
+10 Questions an audience would ask you (Answer in Milestone 4)
+Week 11/Milestone 3 – Presentation
+Must be a recorded presentation with audio - recording video is optional
+Submit a presentation with audio
+Your final white paper
+Questions/answers you came up with that you would be asked by the audience
+Code (a link to GitHub will also work)
+
+
+Final Project Grading Criteria
+
+Each milestone will be evaluated based on the following, (See rubric for full details):
+
+Milestone 1: Proposal and Data Selection
+
+Data source quality
+Research question quality
+Proposal grammar
+Proposal Organization
+Ethical Considerations
+Milestone 2: Project Draft
+
+Meets Requirements
+Draft Format & Quality
+Visualizations and Storytelling
+Ethical Considerations
+Milestone 3: Presentation
+
+Presentation
+Final Report Analysis/Methods/Interpretation of Results
+Meets submission requirements
+Questions have been answered
+Ethical Considerations
+Final Project Templates
+
+Each Milestone must follow the following template:
+
+Milestone 1 - Proposal
+Submit a proposal with the following topics covered as a PDF:
+Topic - Describe and name your project in 1-2 sentences max.
+Business Problem - Describe the business problem your project is trying to solve and/or the research questions you will explore.
+Datasets - where are you getting your data? Describe the data that you will use to solve the problem.
+Methods - What analysis methods will you use to complete this project? Note: this is just a proposal, your project can adapt as you work on it.
+Ethical Considerations - What are some potential ethical concerns of this topic or analyzing the data?
+Challenges/Issues - What are some issues and challenges do you think you might face?
+References - What sources will you use to validate your results and support your project topic?
+
+Milestone 2 - Draft White Paper
+Submit a draft of your white paper with the following topics covered as a PDF:
+Business Problem
+Background/History
+Data Explanation (Data Prep/Data Dictionary/etc.)
+Methods
+Analysis
+
+Conclusion update numbers 
+Identifying individuals at high risk of developing diabetes is a critical component of disease prevention and healthcare. This study presents a predictive equation of diabetes to provide a better understanding of risk factors that could assist in classifying high-risk individuals, make the diagnosis, and prevent and manage diabetes. Five critical variables identified in predicting type 2 diabetes are age, BMI, pedigree, glucose and frequency of pregnancies. We conclude that our proposed model has a prediction accuracy of 78.26% with a cross-validation error rate of 22.86%. As for the case of a classification tree, we would choose the tree with six nodes since it has the highest prediction accuracy (74.48%) than other possible subtrees. The results imply that if we control these five predictors by taking the necessary steps, it could lower type 2 diabetes prevalence. In addition, accurately predicting diabetes might help design interventions and implement health policies that may aid in disease prevention.
+
+Assumptions
+Limitations
+Challenges
+Future Uses/Additional Applications
+Recommendations
+Implementation Plan
+Ethical Assessment
+
+
+-------------------
+
+Week 1/Milestone 1 – Proposal and Data Selection
+See template below
+Find your Data Source
+Write your research questions, along with any potential ethical implications
+Propose your project.
+
+Submit a proposal with the following topics covered as a PDF:
+Topic - Describe and name your project in 1-2 sentences max.
+Business Problem - Describe the business problem your project is trying to solve and/or the research questions you will explore.
+Datasets - where are you getting your data? Describe the data that you will use to solve the problem.
+Methods - What analysis methods will you use to complete this project? Note: this is just a proposal, your project can adapt as you work on it.
+Ethical Considerations - What are some potential ethical concerns of this topic or analyzing the data?
+Challenges/Issues - What are some issues and challenges do you think you might face?
+References - What sources will you use to validate your results and support your project topic?
+
+
+Business Problem
+Diabetes is one of the most common human diseases and has become a significant public health concern worldwide. There were approximately 450 million people diagnosed with diabetes that resulted in around 1.37 million deaths globally in 2017. More than 100 million US adults live with diabetes, and diabetes was the seventh leading cause of death in the US in 2020 . One in ten US adults have diabetes now, and if the current trend continues, it is projected that as many as one in three US adults could have diabetes by 2050 
+Healthcare providers need a scalable, accurate, and data-driven solution to help identify patients at high risk of diabetes as early as possible.
+
+Business Objective
+Improve clinical decision-making efficiency
+    To develop a predictive model for diagnosing diabetes based on medical predictor factors.
+    To assess different factors that influence diabetes prediction, and gain insights into their individual and collective impact on diabetes diagnosis.
+
+DataSets
+This dataset contains 1,168 medical records designed for predicting the onset of diabetes based on routine diagnostic measurements. Each record includes eight clinical features commonly collected during standard health screenings, along with a binary outcome variable indicating whether the patient was diagnosed with diabetes.
+
+Features:
+Pregnancies: Number of times the patient has been pregnant
+Glucose: Plasma glucose concentration from a 2-hour oral glucose tolerance test (mg/dL)
+BloodPressure: Diastolic blood pressure (mm Hg)
+SkinThickness: Triceps skinfold thickness (mm)
+Insulin: 2-hour serum insulin level (μU/mL)
+BMI: Body mass index calculated as weight in kg / (height in m)²
+DiabetesPedigreeFunction: A composite score reflecting the likelihood of diabetes based on family history
+Age: Age of the patient in years
+Outcome: Binary target variable (1 = diabetes diagnosed, 0 = no diabetes)
+
+The dataset comprises 771 negative cases and 397 positive cases, representing a class imbalance ratio of approximately 66:34. Patient ages range from 21 to 81 years. Some feature columns contain zero values (e.g., Glucose, BloodPressure, SkinThickness, Insulin, BMI) that likely represent missing or unrecorded measurements rather than true biological zeros; researchers should account for this during preprocessing.
+This dataset is well suited for supervised binary classification tasks and can be used to benchmark machine learning models such as logistic regression, decision trees, random forests, gradient boosting, support vector machines, and neural networks. It is also appropriate for educational purposes in data science and healthcare analytics curricula, including exercises in exploratory data analysis, feature engineering, handling missing values, class imbalance techniques, and model evaluation.
+The data was prepared and exported from VertexMD, a local-first electronic health records application designed for personal medical record tracking and interoperability research.
+
+Method:
+Supervised Machine Learning Models
+Apply multiple classification algorithms to predict diabetes:
+Base Models
+Logistic/Linear-based models (baseline conceptually)
+K-Nearest Neighbors (KNN)
+Decision Tree
+Random Forest
+Support Vector Machine (SVM)
+Naive Bayes (GaussianNB)
+Gradient Boosting
+Extra Trees Classifier
+
+Key Research Questions
+
+Model Performance
+Which machine learning algorithm provides the highest predictive accuracy for diabetes detection?
+Do advanced methods (ensemble, stacking) outperform individual models?
+
+Feature Importance
+Which patient attributes (e.g., glucose level, BMI, age) are the most influential predictors of diabetes?
+
+Model Robustness
+How well do models perform across:
+	Cross-validation
+	Holdout test data
+Are models overfitting or generalizing well?
+
+Optimization
+Can performance be improved through:
+	Hyperparameter tuning
+	Ensemble methods
+	Feature selection techniques
+
+Business Applicability
+Can the model be used as a decision-support tool in clinical or health screening environments?
+What level of accuracy is required to make the model safe and useful in practice?
+
+Why This Matters (Business Impact)
+Early Detection → reduces complications and hospitalizations
+Operational Efficiency → supports faster screening decisions
+Scalability → enables screening in resource-limited settings
+
+
+Ethical Considerations
+1. Data Privacy & Confidentiality
+Health data (e.g., glucose, BMI) is highly sensitive.
+Risk of exposing personal medical information if not properly anonymized or secured.
+Must comply with regulations (HIPAA, GDPR-like principles).
+
+2. Misdiagnosis Risk
+False negatives → missed diabetes diagnosis
+False positives → unnecessary stress or treatment
+Focus on Model high accuracy, which may indicate overfitting, increasing real-world risk.
+
+3. Lack of Explainability
+Complex models (MLP, ensembles, stacking) are black-box systems.
+Doctors and patients may not trust decisions without explanations.
+
+Challenges/Issues
+
+1. Data Quality Quantity Issues
+Noisy or inaccurate data reduces model reliability. Moreover a 1000 records may not be sufficient for model accuracy.
+
+2. Feature Limitations
+Dataset includes only basic features:
+	No lifestyle data (diet, exercise)
+	No genetic or clinical history
+	Limits predictive power in real-world scenarios.
+
+
+3. Overfitting
+Decision tree achieving 100% accuracy is a red flag.
+Models may memorize training data instead of learning patterns.
+
+4. Computational Complexity
+Ensemble + stacking + PSO + genetic algorithms:
+High runtime
+
+
+Reference:
+https://pmc.ncbi.nlm.nih.gov/articles/PMC8306487/
+https://data.mendeley.com/datasets/nxnty5g7y6/3
+https://www.kaggle.com/code/mathchi/diagnostic-a-patient-has-diabetes
+using part of dataset containing patients from Pima Indian heritage for testing the  model.
+
+
+
+
+# Heart Disease Prediction — Project Proposal
+
+---
+
+## Business Problem
+
+Cardiovascular disease is the leading cause of death globally, accounting for roughly 17.9 million lives annually according to the World Health Organization. In clinical practice, early and accurate identification of patients at elevated heart disease risk enables timely intervention — lifestyle modification, medication, or surgical referral — that can meaningfully reduce mortality. The challenge is that traditional diagnostic pathways rely heavily on invasive testing (coronary angiography), expensive imaging (cardiac MRI, CT angiography), or specialist referral that is unavailable to large portions of the population, particularly in underserved or rural communities.
+
+This project addresses the following core business problem: **can a machine learning model accurately predict the presence of heart disease using non-invasive, routinely collected clinical features — age, sex, resting ECG results, cholesterol, blood pressure, and exercise test results — in a way that could support clinical triage decisions at the primary care level?**
+
+The research questions driving the analysis are:
+
+- Which patient features are the strongest predictors of heart disease, and do they align with established clinical knowledge?
+- Can a machine learning model trained on a relatively small, combined clinical dataset achieve sufficient predictive accuracy and calibration to be clinically useful as a screening support tool?
+- How do linear models (L1-regularized logistic regression) compare to non-linear models (MLP neural network) on this task, and does the added complexity of a neural network deliver meaningfully better performance?
+- Which features drive individual predictions, and can those explanations be communicated in a way that is interpretable to a clinician?
+
+The practical value of solving this problem is a low-cost, non-invasive screening tool that could be integrated into primary care electronic health record (EHR) systems, flagging high-risk patients for further diagnostic workup before symptoms become severe. This has direct cost reduction implications (avoiding unnecessary specialist referrals for low-risk patients) and quality-of-life implications (earlier intervention for high-risk patients who might otherwise be missed).
+
+---
+
+## Datasets
+
+The dataset used in this project is the **Heart Disease UCI dataset**, a well-known benchmark in medical machine learning research, sourced from the UCI Machine Learning Repository and available via Kaggle. The version used here is a combined dataset that merges patient records from four clinical institutions: the Cleveland Clinic Foundation, the Hungarian Institute of Cardiology, the University Hospital Zurich, and the Long Beach VA Medical Center.
+
+The combined dataset contains **918 patient records** and **11 clinical features**, with a binary target variable indicating the presence (1) or absence (0) of heart disease based on angiographic findings.
+
+The 11 input features span four categories:
+
+**Demographic features:** Age (continuous, years) and Sex (binary: M/F).
+
+**Symptom features:** ChestPainType (categorical: ASY — asymptomatic, ATA — atypical angina, NAP — non-anginal pain, TA — typical angina) and ExerciseAngina (binary: Y/N — whether exercise induces anginal symptoms).
+
+**Resting clinical measurements:** RestingBP (continuous, mm Hg — resting blood pressure), Cholesterol (continuous, mg/dL — serum cholesterol), and FastingBS (binary: 1 if fasting blood sugar > 120 mg/dL, 0 otherwise), and RestingECG (categorical: Normal, ST — ST-T wave abnormality, LVH — left ventricular hypertrophy).
+
+**Exercise stress test results:** MaxHR (continuous — maximum heart rate achieved during stress test), Oldpeak (continuous — ST depression induced by exercise relative to rest), and ST_Slope (categorical: Up, Flat, Down — slope of the peak exercise ST segment).
+
+**Known data quality issues that require preprocessing:** Approximately 170–172 records have Cholesterol recorded as 0 mg/dL, which is biologically impossible and represents structural missingness — patients for whom no cholesterol measurement was taken. One record has RestingBP recorded as 0, which is similarly impossible. These are addressed through median imputation on the training set and a binary missingness indicator for Cholesterol given the scale of the missing data.
+
+The class distribution is mildly imbalanced at approximately 55% heart disease positive (class 1) and 45% negative (class 0), which does not require aggressive resampling but informs the choice of evaluation metrics (macro-averaged F1 and balanced accuracy over raw accuracy).
+
+---
+
+## Methods
+
+The analytical pipeline for this project follows a structured machine learning workflow, organized into five phases.
+
+**Phase 1 — Exploratory Data Analysis.** The EDA phase examines the distribution of each feature individually and in relation to the target variable. Class-conditional histograms are used for continuous features to assess raw discriminative power and identify anomalies. Stacked bar charts are used for categorical features to visualize class composition per category. A scatter matrix examines inter-feature correlations and multicollinearity. Statistical tests — Mann-Whitney U for continuous features, chi-squared and Cramér's V for categorical features — are used to quantify the associations visible in the charts.
+
+**Phase 2 — Preprocessing and Feature Engineering.** Preprocessing follows a strict train-first protocol to prevent data leakage: all transformers (imputer, scaler) are fit exclusively on the training set and applied to both training and test sets. Steps include median imputation for Cholesterol and RestingBP zeros, creation of a binary `Cholesterol_missing` indicator to preserve the signal in the missingness pattern, one-hot encoding of categorical features, and StandardScaler normalization of continuous features. A potential improvement for future iterations is `log1p` transformation of Oldpeak to address its zero-inflation and right skew, and `IterativeImputer` as an alternative to median imputation for the MNAR Cholesterol values.
+
+**Phase 3 — Model Training and Selection.** Two model families are trained and compared. First, an L1-regularized logistic regression (Lasso) using `solver='liblinear'`, which provides automatic feature selection through coefficient shrinkage, interpretable log-odds coefficients, and a natural baseline for the more complex model. Second, a multi-layer perceptron (MLP) with two hidden layers (128 and 64 units, ReLU activations, Adam optimizer) capable of capturing non-linear feature interactions. Both models are evaluated on a stratified 80/20 train/test split. Cross-validation (StratifiedKFold, 5 or 10 folds) is used to produce mean ± standard deviation performance estimates that are more reliable than a single split given the dataset size.
+
+**Phase 4 — Model Evaluation.** Evaluation uses a multi-metric approach appropriate for a binary medical classifier: balanced accuracy and macro-averaged F1 as primary metrics (robust to mild class imbalance), plus a confusion matrix to decompose errors into false positives and false negatives (critical given the asymmetric costs of each error type in clinical use), ROC-AUC to assess discrimination across all classification thresholds, and a precision-recall curve to examine the tradeoff between sensitivity and positive predictive value. A calibration curve assesses whether predicted probabilities are reliable, which matters for clinical use where probability estimates inform treatment urgency.
+
+**Phase 5 — Model Explainability.** Feature importance is assessed through three complementary methods: Lasso coefficient magnitudes (showing the linear association between standardized features and the log-odds of heart disease), permutation importance (model-agnostic, measuring the drop in accuracy when each feature is shuffled on a held-out validation set), and SHAP values (SHapley Additive exPlanations) providing both global importance via the beeswarm summary plot and individual prediction explanations via waterfall plots. The cross-method agreement between these three approaches is used to distinguish reliable signal from method-specific artifacts.
+
+---
+
+## Ethical Considerations
+
+**Algorithmic bias and health equity.** The dataset is drawn from four clinical institutions in the United States and Europe, predominantly reflecting patients who had access to specialized cardiac care, stress testing, and angiography. The resulting model may not generalize well to patient populations that are underrepresented in the training data — including patients of different ethnicities, patients from lower-income countries, patients who would not typically receive exercise stress tests, or patients who present differently due to comorbidities. The sex imbalance in the dataset (~3:1 male to female) is of particular concern: the model has substantially less training signal for female patients, who are known to present with atypical heart disease symptoms more frequently than males. Deploying a model with these biases in a clinical triage setting risks systematically under-screening already underserved populations.
+
+**Asymmetric misclassification costs.** In a medical screening context, a false negative (predicting no heart disease when the patient actually has it) is generally far more costly than a false positive (flagging a healthy patient for additional workup). A model optimized purely for accuracy or even F1 may make tradeoffs that are clinically unacceptable. Any real-world deployment of this model would require explicit discussion of the desired operating point on the precision-recall tradeoff, and clinical stakeholder input on the acceptable false negative rate.
+
+**Data privacy and consent.** Patient medical data — even aggregated, de-identified data of the kind used here — carries intrinsic privacy risks. The original dataset was collected for research purposes with appropriate institutional review board (IRB) oversight. Any extension of this work to new patient data, particularly via EHR integration, would require explicit informed consent, HIPAA compliance (in the U.S.), and potentially GDPR compliance (in Europe). The model itself, once trained, encodes statistical patterns derived from real patient records, which raises questions about secondary use.
+
+**Clinical decision authority and automation bias.** Machine learning models in healthcare should function as decision support tools, not autonomous decision-makers. There is a well-documented risk of automation bias — clinicians deferring to algorithmic recommendations even when their own clinical judgment might indicate otherwise, particularly when the tool presents predictions with apparent confidence. A model that outputs f(x)=0.99 without a well-calibrated uncertainty estimate could create unwarranted confidence in a clinician's mind. Model outputs should always be presented with calibration-appropriate uncertainty intervals and explicit framing as "one input among many" rather than a definitive diagnosis.
+
+**Transparency and explainability requirements.** In regulated healthcare settings, black-box model decisions affecting patient care may face legal and regulatory scrutiny. The use of SHAP in this project addresses this partially — individual prediction explanations could in principle be provided to clinicians — but the explanations themselves must be validated for clinical accuracy and communicated in terms that clinicians can meaningfully interpret and critique.
+
+---
+
+## Challenges and Issues
+
+**Generalizability of a combined, heterogeneous dataset.** The dataset merges records from four institutions with different patient populations, data collection protocols, and diagnostic practices. Features like Cholesterol and MaxHR may have been measured with different equipment or at different time points relative to the cardiac event. This heterogeneity adds noise that may degrade model performance on data from any single institution, and it makes it difficult to know which institutional subpopulation the model performs best on without institution-level labels in the evaluation.
+
+**MNAR missingness in Cholesterol.** The approximately 172 patients with Cholesterol=0 likely represent a subpopulation systematically different from patients with measured values — potentially patients with more acute presentations where cholesterol measurement was deprioritized. Median imputation assigns these patients a value they do not have, introducing a systematic bias. The missingness indicator partially corrects for this, but the underlying MNAR mechanism is not fully understood, and the model may have learned associations with this subpopulation that are dataset-specific and non-generalizable.
+
+**Small dataset size relative to model complexity.** With approximately 918 samples, the dataset is small relative to the number of parameters in the MLP (128×input_dim + 128×64 + 64×1 weights). There is a meaningful risk of overfitting, particularly without cross-validation or explicit regularization tuning. Single train/test splits on datasets of this size produce performance estimates with wide confidence intervals — reported metrics may differ by several percentage points from the true population performance.
+
+**Evaluation metric selection for clinical relevance.** Standard ML metrics (accuracy, F1) do not directly map to the clinical utility of a screening tool. Clinicians think in terms of sensitivity (true positive rate — how many heart disease patients does the model catch?), specificity (true negative rate — how many healthy patients does it correctly clear?), and positive/negative predictive value (which depend on disease prevalence in the target population). Translating model performance into these clinically meaningful quantities — and assessing them at the operating threshold that would actually be used in practice — is a non-trivial challenge that requires clinical input.
+
+**Temporal and distributional shift.** Heart disease risk factor profiles change over time (dietary patterns, medication prevalence, obesity rates), and the dataset combines records from different historical time periods across institutions. A model trained on this data may perform differently on patients seen in 2025 compared to patients seen when the original data was collected, particularly for features like Cholesterol (where statin use has dramatically changed the population distribution) and BMI-related risk factors not captured in this dataset.
