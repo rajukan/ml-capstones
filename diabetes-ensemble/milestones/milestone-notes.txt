@@ -1,3 +1,8 @@
+If you join a competition, write the story of your experience, include the competition results and also submit your Jupyter Notebook.
+
+https://www.kaggle.com/code/gyanraju/indian-medicinal-plants-image-detection-vit/edit
+
+
 Project Description
 
 You have been a data scientist since the day you began this program. You may not have recognized it, but it’s been there the whole time. In this course, you’re not only going to recognize it, but also show us what you can do.
@@ -71,10 +76,21 @@ Your final white paper
 Questions/answers you came up with that you would be asked by the audience
 Code (a link to GitHub will also work)
 
+For your first Portfolio Milestone, you will be focused on cleaning up and organizing your content. If you haven’t started saving your work online from the program yet, you will want to start thinking about where you want to do that at. GitHub is the most popular location to store code - but you are welcome to choose a different location (all documentation in the course will be GitHub specific). Your final portfolio assignment won’t just be a code repo though, it will also include a presentation layer, either through GitHub pages or a website that you build (Wix would be a good example of an easy to create website) that will surface and link back to the detail contained in your GitHub Repo. If that didn't make sense, you will essentially have a cover page (The website/GitHub Page) that is a nice visualization of your work that sits on top of your Repo - where all the real work lives (code, etc.).
 
-Final Project Grading Criteria
 
-Each milestone will be evaluated based on the following, (See rubric for full details):
+
+The first step is to take an inventory of what you already have, what is/isn’t working, and determine what you are going to want to highlight in your final Portfolio.
+
+
+
+Go through your existing course materials to determine what is broken and not working.
+Remove files that are unnecessary or move to an archive folder.
+Review your naming/documentation conventions – determine if you need to make improvements here to better explain and describe your work. My suggestion would be to remove any wording specific to Bellevue or the program. It would be better to name things relevant either to the subject/domain or the method used. For example, "Time Series Analysis" or "Medical Chatbot with Machine Learning"
+Create a list of 10 Projects with a brief description of each that you plan to showcase in your Final portfolio and submit to the assignment link. This can be submitted as a PDF or Word document. Most of the projects should come from previous courses and then you can leave placeholders for the 3 projects from this course. If you do not have 10, you won't be deducted points, but please explain why you won't have 10. Also - you are the one deciding what constitutes a project for highlighting, so it could be an assignment, a specific milestone, a project from a past life, etc. This is your portfolio you are building and it shouldn't include junk and you should be happy with what you are including/showcasing.  
+README files are used as a guide for someone who is reviewing your repo. If you have ever downloaded a zip file of software before, usually they provide install instructions in the README file. You should be creating a summary or high-level synopsis of each project (think back to the blog post you created in DSC 640), which we will call README files. Create 2 draft README files for 2 of your projects on your portfolio. You can put these README files in your GitHub Repo, or you can just include them on your portfolio page (I would suggest having them in both locations). The goal would be for you to create one of these summaries/READMEs for each of your projects on your portfolio - so make sure you are working on that through each milestone. You can submit these as PDF files, Word Files, or links to the files in your repo or portfolio.
+
+
 
 Milestone 1: Proposal and Data Selection
 
@@ -112,15 +128,21 @@ References - What sources will you use to validate your results and support your
 
 Milestone 2 - Draft White Paper
 Submit a draft of your white paper with the following topics covered as a PDF:
+Milestone 2 – Draft of White Paper
+See template below
+3-5 pages (illustrations do not count toward page count)
+APA References.
+Include at least 3-5 illustrations (not included in page count)
+1 Appendix (Supporting documentation)
+
+ Draft White Paper
+Submit a draft of your white paper with the following topics covered as a PDF:
 Business Problem
 Background/History
 Data Explanation (Data Prep/Data Dictionary/etc.)
 Methods
 Analysis
-
-Conclusion update numbers 
-Identifying individuals at high risk of developing diabetes is a critical component of disease prevention and healthcare. This study presents a predictive equation of diabetes to provide a better understanding of risk factors that could assist in classifying high-risk individuals, make the diagnosis, and prevent and manage diabetes. Five critical variables identified in predicting type 2 diabetes are age, BMI, pedigree, glucose and frequency of pregnancies. We conclude that our proposed model has a prediction accuracy of 78.26% with a cross-validation error rate of 22.86%. As for the case of a classification tree, we would choose the tree with six nodes since it has the highest prediction accuracy (74.48%) than other possible subtrees. The results imply that if we control these five predictors by taking the necessary steps, it could lower type 2 diabetes prevalence. In addition, accurately predicting diabetes might help design interventions and implement health policies that may aid in disease prevention.
-
+Conclusion
 Assumptions
 Limitations
 Challenges
@@ -128,6 +150,7 @@ Future Uses/Additional Applications
 Recommendations
 Implementation Plan
 Ethical Assessment
+
 
 
 -------------------
@@ -146,6 +169,9 @@ Methods - What analysis methods will you use to complete this project? Note: thi
 Ethical Considerations - What are some potential ethical concerns of this topic or analyzing the data?
 Challenges/Issues - What are some issues and challenges do you think you might face?
 References - What sources will you use to validate your results and support your project topic?
+
+
+
 
 
 Business Problem
