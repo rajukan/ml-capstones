@@ -1,0 +1,211 @@
+BigMart Sales PyOD - Lessons Learned / Session Log
+==========================================================
+
+Scope: Big-mart-sales-pyod.ipynb (bivariate + multivariate anomaly detection)
+       Big-mart-sales-prediction.ipynb (precleaned-data export point feeding it)
+
+
+1. PyOD must never see data where outliers have already been capped/removed
+   - The prediction notebook's pipeline is split -> impute -> outlier
+     capping (IQR-based) -> feature engineering -> ... . PyOD's entire job is
+     to FIND the outliers, so it needs the imputed-but-uncapped snapshot, not
+     anything downstream of the capping step.
+   - There was already an empty placeholder cell in the prediction notebook
+     marked "Preprocessing is completed. This should be a good placeholder
+     for saving files for pyod notebook", sitting exactly between the
+     imputation cell and the outlier-handling section. That's the only
+     correct save point.
+   - Saved as data/train_precleaned.csv: X_train + X_test recombined (with
+     y_train/y_test reattached as Item_Outlet_Sales) and sorted back to the
+     original train_bigmart.csv row order -- imputed/cleaned, uncapped.
+
+2. df_test (the real Kaggle test set, no target column) was also imputed at
+   that same pipeline point (it rides along in the same `for d in (X_train,
+   X_test, df_test)` imputation loops) -- saved separately as
+   data/test_precleaned.csv since it can't be recombined with a target.
+   - Decided NOT to feed it into this notebook's analysis. Both the
+     bivariate (Item_MRP vs Item_Outlet_Sales) and multivariate (X_multi
+     includes Item_Outlet_Sales) anomaly definitions are inherently about
+     *unusual sales*, which df_test doesn't have. Using it here would need a
+     different, sales-independent anomaly question (unusual item/outlet
+     attribute combinations regardless of sales) -- left as a future
+     extension, not implemented.
+
+3. PyOD notebook used to re-derive its own copy of the prediction notebook's
+   cleaning/imputation logic from train_bigmart.csv directly.
+   - Replaced with a direct load of data/train_precleaned.csv /
+     data/test_precleaned.csv -- single source of truth for cleaning, no
+     duplicated imputation code to drift out of sync.
+
+4. Original bivariate model comparison (Item_MRP vs Item_Outlet_Sales only)
+   was a major source of information loss.
+   - The 7 PyOD detectors (ABOD, CBLOF, FeatureBagging, HBOS, IForest, KNN,
+     Average KNN) compared in cells 6-8 only ever saw 2 columns -- they never
+     saw Item_Weight, Item_Visibility, Item_Type, Outlet_Size, etc. An item
+     could look "normal" on price/sales alone while being a genuinely
+     unusual combination given its operational context.
+   - Meanwhile the separate "Multivariate Anomaly Detection" section used a
+     standalone sklearn IsolationForest instead of any of the 7 PyOD
+     classifiers already being compared -- the two sections were never
+     actually evaluated against each other.
+
+5. Reframed the notebook's actual goal mid-session: turn anomalies into
+   business signals (high-value rare events / unusual store-product
+   combinations / real-world signals, not noise) -- not just "which model
+   has the best silhouette score."
+
+6. Reworked the multivariate section (cell-10) to re-run the SAME 7 PyOD
+   detectors used in the bivariate pass on the full multivariate feature set
+   (X_multi: Item_Weight, Item_Visibility, Item_MRP, Item_Outlet_Sales,
+   encoded categoricals, Outlet_Age), picking the winner by silhouette score
+   exactly like the bivariate comparison does.
+   - Added a consensus_count column: how many of the 7 detectors flag each
+     row as anomalous. high_confidence_anomaly = flagged by the winning
+     model AND corroborated by >=4/7 detectors. Rationale: a row only one
+     idiosyncratic model flags is more likely noise; one several independent
+     methods agree on is more likely a real signal.
+   - Confirmed via `help(IForest.decision_function)`: PyOD's documented
+     convention is "outliers are assigned with larger anomaly scores" --
+     used clf.decision_function(X_multi) directly with NO sign flip for
+     anomaly_score. (Note: the older bivariate contour-plot cell-7 negates
+     decision_function with `* -1` for its own contour-fill/threshold logic
+     -- that's specific to how that cell draws the decision boundary, not a
+     general convention to copy elsewhere.)
+
+7. Added automated per-row reason-tagging to the top-anomalies table
+   (cell-12) instead of requiring manual eyeballing of raw values against
+   medians.
+   - For each flagged row, compute percentile rank (scipy.stats.rankdata)
+     across signal_cols = [Item_MRP, Item_Outlet_Sales, Item_Visibility,
+     Item_Weight, Outlet_Age], take the 2 most-deviating features from the
+     50th percentile, and render e.g. "Item_MRP unusually high (98th pct) &
+     Outlet_Age unusually low (3rd pct)" -- a one-line, business-readable
+     "why is this unusual" signal per row.
+
+8. Added statistical rigor to the "anomaly rate by Outlet/Item Type" section
+   (previously just bar charts -- visually suggestive but not testable).
+   - One-sided binomial test (scipy.stats.binomtest) per segment: is this
+     segment's anomaly rate significantly above the 5% contamination
+     baseline, not just visually higher in a bar chart? Filtered to segments
+     with >= 5 anomalies (avoid small-sample noise) and p < 0.05.
+   - This turns "OUT027 has a tall bar" into a defensible "OUT027's anomaly
+     rate is statistically distinguishable from chance" claim.
+
+9. Added a closing "Business Signals Summary" cell (cell-17) that combines
+   the high-confidence individual anomalies (item 6) with the
+   statistically-flagged segments (item 8) into a ranked, plain-English
+   action list (sorted by p-value) -- the deliverable framed as "what should
+   the business do" rather than model metrics.
+
+10. FIXED: label-encoding nominal categoricals as plain integers fabricated a
+    false ordinal distance for the distance-based detectors (KNN,
+    LOF/FeatureBagging, CBLOF) -- e.g. Item_Type_enc=2 was treated as
+    "closer" to 3 than to 9, an arbitrary artifact of encoding order with no
+    real meaning.
+    - Replaced label-encoding with one-hot encoding (pd.get_dummies) for
+      Item_Type, Outlet_Type, and Item_Fat_Content -- the three nominal
+      columns actually used in multivariate_features.
+    - Folded in Item_Fat_Content: it was previously in `ordinal_maps` as a
+      binary {'Low Fat': 0, 'Regular': 1} map, but it's nominal (Low
+      Fat/Regular/No Fat aren't ordered) AND that map never covered 'No
+      Fat' at all -- confirmed via the actual saved data
+      (data/train_precleaned.csv) that 1599 of 8523 rows (~18.8%) are 'No
+      Fat', so Item_Fat_Content_enc was silently NaN for those rows every
+      time this cell ran. Moving it to one-hot fixes both problems at once.
+    - Also removed dead code found in the same block: Outlet_Identifier_enc
+      was being label-encoded but was never referenced in
+      multivariate_features -- computed and discarded every run.
+    - Outlet_Size and Outlet_Location_Type stay as integer ordinal maps --
+      those genuinely have a real order (Small<Medium<High,
+      Tier3<Tier2<Tier1), so an integer code is the correct encoding, not a
+      bug.
+    - Verified by reconstructing the encoding pipeline standalone (no
+      classifier fitting): combined feature matrix is (8523, 30) -- up from
+      10 columns before (16 Item_Type + 4 Outlet_Type + 3 Item_Fat_Content
+      one-hot columns replacing 3 label-encoded ones), zero NaN.
+    - Tradeoff accepted: dimensionality tripled (10 -> 30). Traded
+      deliberately against the false-distance problem it fixes -- see item
+      12 below for how it actually performed once run.
+
+11. Split the multivariate section into one cell per detector (cheapest
+    first: HBOS, IForest, KNN, Average KNN, CBLOF, ABOD, Feature Bagging)
+    instead of one big loop, because the single-cell version took a long
+    time to run as a block.
+    - Shared `fit_and_score(name, clf, X)` helper (one definition, one cell)
+      appends into the same multi_predictions/multi_decision_scores/
+      multi_silhouette dicts used by the final aggregation cell -- no
+      copy-pasted fitting logic per detector.
+    - Each cell prints its own elapsed time, so the slow detector(s) are
+      immediately visible instead of being hidden inside one multi-minute
+      block. Re-running the aggregation/consensus/summary cells downstream
+      no longer requires re-fitting all 7 detectors.
+
+12. First end-to-end execution of the reworked notebook (real data, not
+    just the standalone encoding check from item 10).
+    - Multivariate winner: Isolation Forest, silhouette 0.1127 (CBLOF 0.1075,
+      HBOS 0.1047, Feature Bagging 0.0758, Average KNN 0.0640, KNN 0.0630,
+      ABOD 0.0491 -- lowest). Consistent with item 10's prediction that
+      detectors not relying on a single joint distance metric (IForest,
+      HBOS) would have an edge on this mixed-type, now higher-dimensional
+      feature set.
+    - Per-detector runtime at 30 dims x 8523 rows: 1.3s-4.1s each (HBOS
+      2.8s, IForest 1.6s, KNN 1.5s, Average KNN 1.5s, CBLOF 1.3s, ABOD 3.7s,
+      Feature Bagging 4.1s slowest). The curse-of-dimensionality runtime
+      concern from item 10 did not materialize as a real problem at this
+      scale -- noted for the record, not a guarantee it holds at a larger n.
+    - Result: 427 of 8523 rows (5.0%) flagged anomalous, 67 corroborated by
+      >=4/7 detector consensus (high_confidence_anomaly).
+
+13. FIXED: the first real Business Signals Summary output revealed 3 of its
+    5 slots were the same underlying signal reported three times.
+    - Outlet segments flagged: OUT018 (19.5% rate, 3.9x baseline, p=2.4e-55),
+      OUT019 (21.0%, 4.2x, p=8.8e-38), OUT027 (8.6%, 1.7x, p=3.3e-6).
+    - Item_Type segments flagged: Others (33.7%, 6.7x, p=1.3e-31), Household
+      (14.8%, 3.0x, p=5.6e-29), Health and Hygiene (17.5%, 3.5x, p=3.6e-25),
+      Seafood (18.8%, 3.8x, p=7.0e-5), Breakfast (13.6%, 2.7x, p=3.9e-4).
+    - Checked directly against data/train_precleaned.csv: Others + Household
+      + Health and Hygiene = 169 + 910 + 520 = 1599 rows, and ALL 1599 of
+      them have Item_Fat_Content == 'No Fat' -- i.e. these three "item
+      types" are EXACTLY the Item_Identifier_Type == 'NC' (non-consumable)
+      population, no more, no less (Item_Fat_Content='No Fat' is assigned
+      by the NC id-prefix rule in the prediction notebook, not by Item_Type
+      directly). Combined as one NC segment: rate 17.7%, p=1.5e-75 -- more
+      significant than any of its three parts, and more significant than
+      OUT018.
+    - Because the summary only showed top 5 signals by p-value, and 3 of
+      those 5 slots were really the same NC finding restated three times,
+      two genuinely distinct findings (OUT027, and either Seafood or
+      Breakfast) were silently crowded out of the top-5 every run.
+    - Fix: added item_identifier_type_signals = segment_anomaly_table(
+      'Item_Identifier_Type') alongside the existing Outlet_Identifier/
+      Item_Type tables, plus a new dedupe_nested_signals() function --
+      builds the actual row-index set for every flagged segment across all
+      three groupings, sorts broadest-first, and drops any segment whose
+      row set is fully contained in an already-kept, broader segment.
+      business_signals (the deduped list) is what the summary cell now
+      ranks and prints, instead of the raw outlet/item-type tables directly.
+    - Verified by hand-computing p-values for every candidate segment: the
+      new top-5 ranks as NC (p=1.5e-75) > OUT018 (2.4e-55) > OUT019
+      (8.8e-38) > OUT027 (3.3e-6) > Seafood (7.0e-5) -- Breakfast now misses
+      the cut on its own statistical merit (6th), not because 3 of its
+      competitors were duplicates of each other.
+    - General lesson: when summarizing multiple categorical groupings of
+      the same rows (outlet vs item type vs item category), always check
+      for nesting/overlap before ranking them together -- a finer-grained
+      grouping that happens to align with a coarser one will otherwise get
+      counted multiple times and dominate a "top N" cut purely by volume,
+      not by being N independent findings.
+
+
+OPEN ITEMS / KNOWN ISSUES (not yet fixed)
+============================================
+- The "top 5" cutoff in the Business Signals Summary is a fixed, arbitrary
+  number -- after item 13's dedupe fix frees up slots, a future run with
+  more flagged segments could still silently drop a real 6th+ finding
+  (e.g. Breakfast in the current run). Not fixed -- no severity-based
+  cutoff, just a hardcoded top-5.
+- df_test / data/test_precleaned.csv is saved but unused (see item 2) --
+  only useful if a sales-independent anomaly question is added later.
+- The dimensionality/runtime/winner-model observations in item 12 are from
+  ONE run on this dataset -- not re-verified across multiple random seeds
+  or contamination thresholds.

@@ -1,0 +1,586 @@
+BigMart Sales Prediction - Lessons Learned / Session Log
+==========================================================
+
+Scope: Big-mart-sales-prediction.ipynb (EDA/feature-selection/modeling notebook)
+       model_comparison.py (standalone 5-fold CV modeling script)
+
+
+PART 1 - NOTEBOOK: Big-mart-sales-prediction.ipynb
+====================================================
+
+1. 5-fold CV instead of single train/test split
+   - Found an existing helper, evaluate_regressor_kfold(), already doing proper
+     5-fold CV (RMSE/MAE/R2 mean +/- std, plus OOF RMSE) -- but it was only being
+     called for Linear Regression. Every other model (Ridge, Lasso, DecisionTree,
+     RandomForest, GradientBoosting, AdaBoost, Bagging) was still evaluated on a
+     single 80/20 train/test split (Xa/ya -> Xb/yb).
+   - Decision: stop maintaining this in the notebook; move all model comparison
+     into model_comparison.py instead (see Part 2).
+
+2. "Best params" were computed but never used
+   - GridSearchCV.best_params_ was printed for inspection only -- never fed into
+     the model that was actually used downstream.
+   - The "final" model (BaggingRegressor wrapping a GradientBoostingRegressor)
+     used plain sklearn defaults (only random_state set), ignoring both the
+     GridSearchCV result and a separate set of hand-tuned values written into a
+     markdown cell from eyeballing train-vs-test curves.
+   - The final model was also never scored against a true holdout: it was fit on
+     100% of the labeled data and used directly to predict on the unlabeled
+     Kaggle test set (df_test) with no RMSE check beforehand.
+   - Fixed properly in model_comparison.py: tune_gradient_boosting() returns
+     grid.best_estimator_ (not just printed params), which is what actually gets
+     wrapped into the final model.
+
+3. ANOVA test cell was not actually ANOVA
+   - The cell under the "Anova test" markdown header used
+     sklearn.feature_selection.f_regression(x, y) -- this tests linear
+     correlation with a continuous target, not group-mean differences. It was
+     applied to label/ordinal-encoded NOMINAL variables (Outlet_Identifier,
+     Item_Type, etc.) whose integer codes have no real order, making a
+     "linear trend" test meaningless for them.
+   - Fixed: replaced with a real one-way ANOVA using scipy.stats.f_oneway,
+     grouping y by each encoded level per categorical column. Valid because
+     label-encoding is a bijective renaming -- grouping by the code is the same
+     as grouping by the original category label.
+   - Result: MRP_bin, Outlet_Identifier, Outlet_Establishment_Year,
+     Outlet_Existence, Outlet_Size, Outlet_Location_Type, Outlet_Status were all
+     highly significant (p ~ 0). Item_Type and Item_Identifier_Type were
+     weakly-but-significantly associated. Weight_bin and Item_Fat_Content were
+     NOT significant (p = 0.24, p = 0.53).
+
+4. SelectFromModel(LinearRegression()) had a scale bug
+   - Only 6 of 19 candidate columns had been standardized at that point in the
+     notebook; the rest were raw label/ordinal integer codes. Coefficient
+     magnitude is not comparable across features on different scales, so the
+     "above mean |coef|" selection rule was partly an artifact of which columns
+     happened to be scaled.
+   - Fixed: standardize the full X_train before fitting SelectFromModel.
+   - Result changed from 5 to 7 selected features -- crucially, both
+     Outlet_Establishment_Year and Outlet_Existence got swept in together. Since
+     Outlet_Existence = 2020 - Outlet_Establishment_Year (a perfect linear
+     transform of each other), this is a multicollinearity artifact, not two
+     independent signals.
+
+5. Removed the "Multivariate Feature Selection" section (SequentialFeatureSelector
+   + RFE)
+   - Diagnosed as dead weight: its output was never consumed by the modeling
+     pipeline, it was the most expensive cell in the whole feature-selection
+     section (~800+ model fits for a forward selection over ~19 features), and
+     RFE was run on a feature set that already had SFS's own picks removed --
+     so it wasn't even an independent second opinion.
+   - User removed this section.
+
+6. Built a proper feature-selection decision pipeline (4 new cells)
+   - Cell 1: drop redundant features using pairwise correlation > 0.8, keeping
+     whichever side of each pair correlates more strongly with the target.
+     Computed on X_train/y_train only (not the full df) to avoid leaking the
+     test split into the feature-selection decision.
+     Dropped: Calorie_Count_per_100g, Item_Weight, MRP_bin,
+     Outlet_Establishment_Year, Outlet_Existence, log_Calorie, log_visibility.
+   - Cell 2: re-run ANOVA (categorical columns) + Pearson correlation
+     (continuous columns) on the surviving features.
+   - Cell 3: re-run the scaled SelectFromModel check on the surviving features.
+   - Cell 4: combine into one `summary` table with an Agreement score (0, 1, or
+     2) = how many of the two method families (univariate stats vs embedded
+     coefficients) flagged each feature.
+   - Findings: consensus core (Agreement = 2) is Item_MRP, Outlet_Size,
+     Outlet_Location_Type, Outlet_Type. Outlet_Status has a huge univariate
+     signal (ANOVA F=152) but isn't picked by the embedded check -- its
+     information is largely subsumed once Outlet_Size/Type/Location_Type are
+     all present together. Item_Fat_Content and Weight_bin are confidently dead
+     (p = 0.86, p = 0.33). Calorie_Count_per_givenwt and Item_Frequency clear
+     p < 0.05 but with negligible effect sizes (r = 0.03, F = 7.96) --
+     statistically real but practically tiny.
+   - Punch line: the ORIGINAL hardcoded modeling feature list
+     (Calorie_Count_per_givenwt, Item_Visibility, Item_MRP, Outlet_Existence,
+     Outlet_Type) was missing 2 of the 4 consensus features (Outlet_Size,
+     Outlet_Location_Type) and included a feature that lost a multicollinearity
+     battle (Outlet_Existence) plus one with a negligible effect size.
+
+7. Removed the hardcoded feature list entirely
+   - final_features = summary.loc[summary['Agreement'] >= min_agreement,
+     'Feature'].tolist() -- feature set is now derived directly from the
+     statistical test outcomes, with min_agreement (1 or 2) as the one
+     transparent, adjustable threshold, instead of a hand-picked column list.
+   - X_cv/y_cv, X1/y1, and XX (submission features) were all rebuilt from
+     final_features.
+   - Flagged as now-redundant and safe to delete (or reframe as "before" context
+     for narrative purposes): the scaled-but-not-deduplicated SelectFromModel
+     cell from item 4 above -- superseded by Cell 3 of the new pipeline.
+
+8. Handed off to model_comparison.py
+   - Saved the engineered feature matrices to CSV so a plain Python script could
+     pick them up without re-running the whole notebook:
+       X_cv.to_csv('data/X_train_features.csv', index=False)
+       y_cv.to_csv('data/y_train.csv', index=False)
+       XX.to_csv('data/X_test_features.csv', index=False)
+     (Note: X1/y1 are identical to X_cv/y_cv -- both built from
+     df[final_features] / df['Item_Outlet_Sales'] -- so saving one covers both.)
+
+
+PART 2 - PYTHON FILE: model_comparison.py
+============================================
+
+1. Created as a standalone, importable module (no data loading/notebook
+   dependency) -- assumes X_train, y_train, X_test are supplied by the caller.
+   Functions:
+     - evaluate_regressor_kfold(model, X_train, y_train, model_name, folds=5)
+         5-fold CV RMSE/MAE/R2 (mean +/- std) + out-of-fold RMSE for one model.
+     - build_candidate_models()
+         Linear/Ridge/Lasso (each StandardScaler + model pipeline),
+         DecisionTree, RandomForest, GradientBoosting, AdaBoost, Bagging(GBR).
+     - compare_models(X_train, y_train)
+         Runs the CV helper for every candidate, returns one table sorted by
+         RMSE_mean. This is what replaces the notebook's single-split
+         comparison loop entirely.
+     - tune_gradient_boosting(X_train, y_train)
+         GridSearchCV over GBR hyperparameters with cv=5 (matching the
+         comparison step), returns grid.best_estimator_ / best_params_ /
+         best CV RMSE -- the actual fitted best model, not just a printed dict.
+     - build_final_model(tuned_gbr)
+         Wraps the tuned GBR in a BaggingRegressor -- this is what fixes the
+         "best params never used" gap from the notebook.
+     - main(X_train, y_train, X_test)
+         Orchestrates all of the above, fits the final model on the full
+         training data, predicts on X_test, returns a DataFrame.
+
+2. Naming cleanup
+   - evaluate_regressor_kfold's parameters were originally generic X, y even
+     though every call site passed X_train, y_train -- renamed parameters to
+     X_train, y_train for consistency, and renamed the per-fold split variables
+     to X_fold_train / X_fold_val / y_fold_train / y_fold_val so they're clearly
+     distinct from the full X_train/y_train passed in.
+
+3. Added a __main__ entry point
+   - Loads the three CSVs saved from the notebook (data/X_train_features.csv,
+     data/y_train.csv, data/X_test_features.csv), runs main(), writes
+     data/predictions.csv, and prints a preview.
+   - Run via: python model_comparison.py   (from inside the bigmart/ directory)
+
+4. Fixed a log-scale predictions bug
+   - The notebook log-transforms the target early on (Item_Outlet_Sales ->
+     log(Item_Outlet_Sales)) to fix skew, so y_train fed into this script is on
+     the log scale.
+   - First run's predictions.csv preview showed values like 7.30, 6.12, 8.56 --
+     exp() of these (~1480, ~454, ~5212) land exactly in the real sales range,
+     confirming predictions were being returned on the log scale, not the real
+     sales scale. Unusable as-is for submission or business use.
+   - Fixed: main() now returns np.exp(final_model.predict(X_test)) instead of
+     the raw prediction. As a side effect, this also makes the original
+     notebook's np.where(pred > 0, pred, 100) floor-clipping unnecessary --
+     exp() of anything is always positive.
+   - NOTE (see Part 3): this was reverted in a later session -- the target is
+     no longer log-transformed at all, so main() now returns
+     final_model.predict(X_test) directly, no np.exp().
+
+
+PART 3 - PIPELINE REORDER SESSION (post Part 1/2 follow-up)
+====================================================
+
+1. Reordered the whole preprocessing pipeline to: train-test split -> impute ->
+   outlier handling -> new-features -> skew check -> label encoding -> scale ->
+   ANOVA/feature-selection.
+   - Moved the train/test split to the very first step (previously it only
+     happened right before the feature-selection pipeline). Every fit-style
+     statistic since (impute means, outlier bounds, bin edges, label encoders,
+     scaler) is now computed on X_train only and applied to X_test/df_test --
+     not just the feature-selection step, which is all the original pipeline
+     protected against.
+   - Outlier handling (z-score/IQR/std-dev) inserted between impute and
+     new-features: needs a complete (post-impute) column to compute on, and
+     must run before any feature derived from that column (bins, ratios) so
+     those features aren't distorted by uncapped outliers.
+
+2. Restructured every step from a 2-way (df / df_test) fit/apply pattern to a
+   3-way one (X_train fits, X_test and df_test transform-only).
+   - This surfaced a real bug: Item_Visibility's imputation only filled NaN
+     via a single group mean (by Item_Identifier); when every row for a given
+     Item_Identifier happened to be missing within the 80% X_train split, that
+     group's mean was itself NaN, leaving residual NaN in Item_Visibility.
+     pearsonr's default nan_policy silently returned NaN (no crash), which is
+     what surfaced the bug. Fixed by adding the same two-level fallback
+     Item_Weight's imputation already had: fall back to the Item_Type mean.
+
+3. Outlet_Type merge (Supermarket Type3 -> Type2) reverted.
+   - The original notebook merged these because an EDA crosstab of
+     Outlet_Location_Type / Outlet_Size / Item_Identifier_Type composition
+     looked similar between them. Type2 and Type3 are each exactly one outlet
+     (OUT018 and OUT027). Testing the actual target directly: OUT018 mean
+     sales 1995.50 vs OUT027 mean sales 3694.04 (Welch t-test p ~ 6e-83) --
+     sharply different. The composition similarity never extended to sales,
+     so merging destroyed real signal. Consistent with Big-mart-sales-pyod.ipynb
+     independently flagging OUT027 as anomalous far above baseline.
+
+4. Fixed the ANOVA cell being applied indiscriminately to every column,
+   including continuous/scaled ones.
+   - For a continuous column, grouping by `.unique()` produces ~1 row per
+     group once scaled -- a meaningless test, not just a weaker one. Split into
+     ANOVA (categorical columns) + Pearson (continuous columns), matching the
+     design Part 1 item 3 already validated, now correctly rebuilt for the
+     reordered pipeline.
+
+5. Dropped Item_Identifier (the raw ID column, ~1559 unique values) from the
+   candidate feature set entirely.
+   - It was still riding along as a "feature" and crashed pearsonr with an
+     object-dtype error. Item_Identifier_Type (the 2-letter prefix) already
+     captures its useful signal; the raw ID itself is noise at this
+     near-row-level cardinality.
+
+6. Re-ran dedup (pairwise correlation > 0.8, keep the side with stronger
+   target correlation) on the reordered/fixed pipeline.
+   - Produced an IDENTICAL drop list to the original notebook's dedup:
+     Calorie_Count_per_100g, Item_Weight, MRP_bin, Outlet_Establishment_Year,
+     Outlet_Existence, log_Calorie, log_visibility. Strong validation that the
+     underlying statistical structure of the data didn't change -- only the
+     correctness of how it was computed did (no leakage, no NaNs, no
+     Outlet_Type merge artifact).
+   - Re-confirmed the embedded check (SelectFromModel) needs a fresh
+     full-column StandardScaler fit computed AFTER dedup, not reused from an
+     earlier scale_features list -- dedup changes which side of a redundant
+     pair survives (e.g. Item_Visibility over log_visibility), so a
+     pre-dedup scale_features list no longer covers the right columns.
+     Re-confirms Part 1 item 4's original diagnosis in the new context.
+
+7. Found and deleted THREE stale duplicate copies of the dedup -> ANOVA ->
+   embedded-check -> Agreement-table pipeline still physically present in the
+   notebook from before this session (one using X_train_dedup/univariate_df
+   variable names, one being the literal original x/y-based broken ANOVA cell,
+   and one being an entire second "Train Test Split" -> "Standard Scaling" ->
+   "Filter Methods" section using different variable names like
+   global_test_size/seed).
+   - Because these sat physically AFTER the new clean pipeline in the
+     notebook, running top-to-bottom (or even just re-running cells) silently
+     re-executed them, overwriting X_train/X_test/y_train/y_test/anova_df/
+     final_features with stale results. This looked like a code bug (the same
+     KeyError recurred across several attempted fixes) but was actually
+     leftover notebook structure. Lesson: when reordering a long-lived
+     notebook, audit for and delete superseded cells -- don't just add new
+     ones alongside old ones with similar variable names.
+
+8. Export step changed: X_cv/y_cv now recombine X_train + X_test via
+   pd.concat, instead of referencing the original df (which is never touched
+   after the split, so no longer has the engineered columns at all).
+   - The internal split's only job was protecting the feature-selection
+     decision (dedup/ANOVA/embedded check) from leakage. Once final_features
+     is locked in, there's no reason to withhold 20% of labeled data from the
+     actual exported training set -- matches the original notebook's intent of
+     using 100% of labeled rows for X_cv/y_cv.
+
+9. Decided not to log-transform the target this session (diverges from the
+   original notebook, which did log(Item_Outlet_Sales) to fix right-skew).
+   - model_comparison.py's np.exp() prediction-inversion was removed to match
+     (see Part 2 item 4 note above) -- predictions are now on the real sales
+     scale directly, no inversion needed.
+
+
+RESULTS SO FAR -- PRE-PART-3 (5-fold CV, log-sales scale)
+============================================================
+Model           RMSE_mean   R2_mean
+Bagging         0.523       0.735
+Gradient        0.524       0.734
+RandomForest    0.553       0.703
+AdaBoost        0.564       0.692
+Ridge           0.662       0.576
+Linear          0.662       0.576
+DecisionTree    0.743       0.465
+Lasso           1.017      -0.002   (BROKEN -- see Part 3 item 10 below)
+
+Final model (Bagging of tuned GBR): CV RMSE 0.524 +/- 0.009, OOF RMSE 0.524
+
+
+RESULTS SO FAR -- POST-PART-3, NO LOG-TRANSFORM (5-fold CV, real sales scale,
+Outlet_Type unmerged) -- SUPERSEDED, see item 12 (82 negative predictions)
+============================================================
+Model           RMSE_mean   R2_mean    OOF_RMSE
+Gradient        1082.161    0.596      1082.669
+Bagging         1085.156    0.594      1085.663
+RandomForest    1130.680    0.559      1131.035
+AdaBoost        1153.314    0.541      1153.823
+Lasso           1203.590    0.501      1204.078
+Linear          1203.625    0.501      1204.111
+Ridge           1203.625    0.501      1204.111
+DecisionTree    1551.996    0.168      1552.023
+
+Tuned GradientBoosting (GridSearchCV): max_features=5, max_leaf_nodes=4,
+  min_samples_leaf=3, min_samples_split=0.1; CV RMSE 1079.864 (vs 1082.161
+  untuned Gradient -- same pattern as pre-Part-3: grid search buys essentially
+  nothing over sklearn defaults).
+
+Final model (Bagging of tuned GBR): CV RMSE 1086.829 +/- 37.356, OOF RMSE
+  1087.47 -- statistically indistinguishable from untuned Gradient, same as
+  pre-Part-3.
+
+10. Lasso's "broken" entry from before Part 3 (RMSE 1.017, R2 ~ 0 on log
+    scale) is no longer broken in the no-log-transform pipeline (RMSE
+    1203.59, R2 0.501 -- matches Linear/Ridge). Almost certainly accidental,
+    not a deliberate alpha tune: Lasso's L1 penalty is fixed in absolute
+    terms (alpha=1.0); on the log scale the residual sum-of-squares is tiny
+    (target ~5-10 range) so the fixed penalty dominated and zeroed every
+    coefficient, but on the real sales scale (~hundreds-thousands) the same
+    penalty is comparatively negligible. Confirmed fragile in item 13 below
+    -- it breaks again the moment the target is log-transformed again.
+11. R2 dropped from 0.735 (log scale, pre-Part-3 best model) to 0.596 (real
+    scale, no-log-transform best model) -- a real, measurable cost of
+    dropping the target log-transform, not noise.
+12. The no-log-transform decision (item 9) was reverted after checking the
+    actual prediction output, not just the CV metrics: 82 of 5681 final
+    predictions (~1.4%) were negative (min -292.99) -- impossible for a sales
+    value. Also the predicted max (6554) was far below the real training
+    target's max (13,087), and the predicted median (2045.86) sat well above
+    the real training median (1794) -- the predicted distribution was
+    compressed/narrower than the real right-skewed one. All three symptoms
+    point to the same cause: squared-error loss directly on a skewed raw
+    target underfits the high-value tail and has no mechanism to keep
+    predictions positive.
+13. Fix: y_train is log-transformed in the __main__ block (np.log) before
+    being passed to main(); main()'s final predict step now exponentiates
+    (np.exp) only the X_test predictions, exactly mirroring the original
+    pre-Part-3 design (Part 2 item 4). Every CV/holdout RMSE/MAE/R2 reported
+    during comparison/tuning is therefore back on the log scale.
+    - Result: negative predictions eliminated entirely (min 84.34). R2
+      recovered to 0.735-0.738, matching the original pre-Part-3 numbers
+      almost exactly -- strong confirmation the rest of this session's
+      pipeline fixes didn't change the underlying modeling capability, only
+      correctness.
+    - Lasso broke again immediately (RMSE=1.018, R2~-0.001) -- confirms it
+      was never actually fixed, just scale-sensitive (see item 10).
+14. New finding even after restoring the log-transform: predicted mean
+    (1944.47) is ~11% below the real training target's mean (~2181).
+    Mechanism: exp() is convex, so exp(predicted mean of log-sales)
+    mathematically underestimates the true mean sales (Jensen's inequality)
+    unless the retransformation includes a bias correction (e.g. Duan's
+    smearing estimator -- multiply exp(pred) by the mean of exp(residuals)
+    from training). This bias was already present in the original
+    pre-Part-3 pipeline too; it was just never checked because no one had
+    compared predicted-vs-real summary stats from model_comparison.py before
+    this session. Not yet fixed -- see Open Items.
+
+
+RESULTS SO FAR -- POST-PART-3, LOG-TRANSFORM RESTORED (5-fold CV on 80% +
+single holdout eval on 20%, log-sales scale) -- CURRENT
+============================================================
+       Model  RMSE_mean  Holdout_RMSE  R2_mean  Holdout_R2
+     Bagging      0.523         0.520    0.735       0.737
+    Gradient      0.524         0.520    0.735       0.737
+RandomForest      0.549         0.539    0.709       0.717
+    AdaBoost      0.560         0.560    0.697       0.695
+       Ridge      0.648         0.640    0.594       0.601
+      Linear      0.648         0.640    0.594       0.601
+DecisionTree      0.752         0.741    0.453       0.467
+       Lasso      1.018         1.014   -0.001      -0.000   (BROKEN again -- see item 13)
+
+Tuned GradientBoosting: max_features=5, max_leaf_nodes=4, min_samples_leaf=3,
+  min_samples_split=0.1; CV RMSE 0.523 (vs 0.524 untuned Gradient -- no
+  improvement, same "tuning doesn't beat defaults" pattern every round so far).
+Final model (Bagging of tuned GBR): CV RMSE 0.524 +/- 0.016, holdout RMSE
+  0.519 / MAE 0.4 / R2 0.738 -- matches pre-Part-3 almost exactly.
+
+Final predictions (real scale, after exp()): count 5681, mean 1944.47 (vs
+real training mean ~2181 -- see item 14 bias), min 84.34 (no negatives,
+fixed), max 5802.21.
+
+
+PART 4 - CANONICAL PREPROCESSING PIPELINE (REVIEWED/CORRECTED)
+====================================================
+
+1. A freshly-proposed restatement of the pipeline (as a generic ML
+   taxonomy) put outlier handling AFTER feature engineering and skew
+   analysis:
+     split -> basic cleaning -> feature engineering (log/bins/derived) ->
+     skew analysis -> outlier handling (train only) -> encoding -> scaling ->
+     feature selection -> model training/validation
+   Corrected: outlier handling must move back up, between basic cleaning and
+   feature engineering -- same dependency Part 3 item 1 already established
+   (bins/ratios derived from a raw column inherit distortion from uncapped
+   outliers in that column if outlier handling runs after they're derived).
+
+2. "log transform" is not an independent feature-engineering choice
+   parallel to skew analysis -- it's the OUTPUT of the skew check. Skew
+   analysis must run first (on both raw and newly-derived continuous
+   columns, e.g. Calorie_Count_per_givenwt) to decide whether a transform is
+   warranted; the transformed column (log_visibility, log_Calorie) is then a
+   follow-on feature-engineering step, not something created up front.
+
+3. CORRECTED CANONICAL ORDER (matches what the notebook actually
+   implements, Part 3 item 1):
+     1. Train-test split
+     2. Basic cleaning -- two sub-categories with different leakage rules,
+        see item 5 below (deterministic label/sentinel fixes vs. fitted
+        missing-value statistics)
+     3. Outlier handling (TRAIN ONLY thresholds) -- on raw continuous
+        columns, before they feed any derived feature
+     4. Feature engineering (bins, ratios, domain-mapped features -- built
+        on cleaned, capped inputs)
+     5. Skew & distribution analysis -> apply chosen transforms (log/sqrt)
+        as a sub-step
+     6. Encoding
+     7. Scaling (train-fit) -- needed even if the final model is tree-based
+        and scale-invariant, because the feature-selection step's embedded
+        check (SelectFromModel(LinearRegression())) only gives comparable
+        coefficient magnitudes on scaled input (the exact bug from Part 1
+        item 4). Scale everything feeding that check, not a hand-picked
+        subset.
+     8. Feature selection, as 4 sub-steps in order:
+          a. dedup pairwise-redundant features (corr > 0.8, keep the side
+             with stronger target correlation) -- must run BEFORE the
+             univariate/embedded checks, or redundant features get tested
+             against each other instead of against the target
+          b. univariate significance: ANOVA (categorical) / Pearson
+             (continuous) on survivors
+          c. embedded/model-based ranking (SelectFromModel)
+          d. combine into one Agreement score
+     9. Model training + validation -- k-fold CV for model comparison (not
+        a single train/test split, Part 1 item 1), plus a true holdout check
+        on the final chosen model before predicting on the unlabeled test
+        set (the gap from Part 1 item 2).
+
+4. Net effect: this is a relabeling/clarification of the pipeline this
+   notebook already implements (Part 3 item 1's reorder), not a new design.
+   The one real correction was catching a regression in the freshly-proposed
+   restatement of the order (outlier handling drifting after feature
+   engineering/skew analysis) before it got implemented.
+
+5. "Basic cleaning -- train-fit stats only" (item 3 step 2 above) overstated
+   the rule. The notebook intentionally keeps several cleaning ops on the
+   full df/df_test, BEFORE the split (Item_Identifier_Type prefix slice +
+   NC -> 'No Fat' override, Item_Fat_Content typo normalization, Item_Visibility
+   0 -> NaN, Outlet_Size NaN -> 'Unknown' -> 'Small'). Re-examined: this is
+   correct, not a leak, because none of them fit a statistic FROM the data's
+   distribution -- they're fixed, deterministic rules (string replace,
+   sentinel substitution, fixed remap) applied identically regardless of
+   which rows end up in which split. Train and test get the same rule, so
+   there's nothing for the split-internal fold to leak into.
+   - The one borderline case: Outlet_Size 'Unknown' -> 'Small' was decided by
+     eyeballing crosstabs (cell 41-49) computed on the full df. Still not a
+     quantitative leak (the output is a fixed categorical remap, not a number
+     fit from train, e.g. not a mean/threshold/bin-edge), just a softer
+     "test-aware" judgment call -- noted, not fixed.
+   - The actual dividing line: anything that FITS A STATISTIC from the data
+     (group means/medians for imputation, IQR/z-score outlier bounds, qcut
+     bin edges, label-encoder vocabularies, scaler mean/std, ANOVA/Pearson/
+     embedded-selector statistics) must be train-only -- and every one of
+     those already is (Part 3's whole point). Deterministic rule-based
+     cleaning has no such constraint and can stay wherever it's clearest to
+     read, pre- or post-split.
+   - Cleanup applied alongside this check: the Item_Identifier_Type
+     creation was previously duplicated (once pre-split on df/df_test, again
+     post-split inside the feature-engineering cell) -- removed the
+     post-split copy, kept the single pre-split creation since the NC ->
+     'No Fat' cleaning step depends on it.
+
+
+PART 5 - CODE REVIEW SESSION (model_comparison.py, post Part 4)
+====================================================
+
+1. Confirmed: DecisionTree/RandomForest/Gradient/AdaBoost/Bagging are NOT
+   wrapped in Pipeline -- only Linear/Ridge/Lasso get
+   Pipeline([('scaler', StandardScaler()), ...]) (build_candidate_models(),
+   lines 89-99). Tree-based models receive whatever's already in
+   X_cv_train/X_holdout (pre-scaled CSV) directly.
+
+2. Corrected a mischaracterization of the pre-scaled-CSV situation as a
+   "tree model leakage path." It isn't one -- not even a negligible one.
+   - The CSV the notebook exports recombines 100% of labeled rows
+     (train + test) into one file, scaled ONCE using statistics fit on the
+     notebook's own internal 80% train split (Part 3 item 8). main()'s
+     train_test_split into X_cv_train/X_holdout is a SEPARATE, later split
+     of that same recombined pool -- so both the new cv_train and the new
+     holdout inherit one global scaling transform fit from a different 80%
+     partition than either of them.
+   - This has ZERO effect on the five tree-based models, not just a small
+     one: they split on per-feature rank order, and StandardScaler is one
+     shared affine map applied identically to every row regardless of
+     which subset produced its mean/std -- order is preserved for every
+     row no matter what. Whether the transform came from 80%, 100% of the
+     data, or no scaling at all, the trees' splits/predictions are
+     unchanged.
+   - If this matters anywhere, it's a (still negligible, ~6800/8523-row
+     overlap between the two splits) residual effect on the three LINEAR
+     models, whose inner Pipeline scaler re-fits on top of values that
+     already carry the upstream transform's slight contamination. Not
+     worth fixing at this dataset size.
+
+3. Confirmed: tune_gradient_boosting(X_cv_train, y_cv_train) only ever sees
+   X_cv_train -- X_holdout is never passed to GridSearchCV. Correct, and
+   not a nested CV loop.
+   - Corrected the follow-on claim that the missing nested-CV step
+     explains why holdout RMSE differs from the reported CV RMSE for the
+     tuned model. This project's own run notes (model_comparison.py's
+     trailing docstring) show holdout RMSE LOWER than CV RMSE for every
+     model in the comparison table, tuned or not (Ridge 0.648->0.640,
+     DecisionTree 0.752->0.741, final tuned GBR 0.524->0.519) -- already
+     diagnosed there as this particular 80/20 split's holdout being an
+     incidentally "easier" slice, not tuning-selection bias. Also: the
+     tuned GBR's CV score (0.523) and the untuned default's CV score
+     (0.524) are statistically indistinguishable -- no evidence of a
+     winner's-curse effect from the 800-combination grid search.
+     Non-nested tuning being an optimistic estimator in general is a fair
+     caveat to name; attributing the gap actually observed here to it is
+     not supported by this project's own numbers.
+
+4. The ~11% low-bias from exp() retransformation (Part 3 item 14, still
+   open) was reviewed against a proposed one-line "smearing estimator" fix
+   and found to use the wrong formula, computed the wrong way:
+   - exp(sigma^2/2) is the PARAMETRIC lognormal bias correction (valid only
+     if log-scale residuals are exactly Gaussian) -- not Duan's smearing
+     estimator, despite being labeled that way. Duan's actual formula
+     (already named correctly back in Part 3 item 14) is non-parametric:
+     mean(exp(residuals)), no normality assumption required.
+   - The proposed code also computed residuals IN-SAMPLE
+     (final_model.predict on the exact X_train/y_train it was just refit
+     on), which understates the true residual variance -- same direction
+     of optimism as item 3 above. Honest residuals require predicting on
+     X_holdout with a model fit only on X_cv_train (never seeing
+     X_holdout), the same clone-fit-predict pattern evaluate_regressor_holdout
+     already uses.
+   - Corrected fix (given to the user as a snippet, NOT YET applied to
+     model_comparison.py):
+       holdout_model = clone(final_model).fit(X_cv_train, y_cv_train)
+       residuals_log = y_holdout - holdout_model.predict(X_holdout)
+       smear = np.mean(np.exp(residuals_log))
+       ... final_model.fit(X_train, y_train)
+       predictions = np.exp(final_model.predict(X_test)) * smear
+
+5. Identified a real gap: no residual or actual-vs-predicted visualization
+   existed anywhere for the final model -- the notebook's observation cells
+   were text-only, no plot showing WHERE the model fails.
+   - Designed (NOT YET applied) reusing the same X_holdout predictions from
+     item 4: actual-vs-predicted scatter, residual-vs-predicted scatter,
+     log-scale residual histogram, and mean-residual-by-actual-sales-decile
+     (the last one specifically to check whether item 4's low-bias
+     concentrates at the high-sales end -- the expected signature of
+     squared-error loss underfitting a skewed tail).
+   - Outlet_Type/Item_Type residual breakdown can't be done inside
+     model_comparison.py -- it only ever sees encoded numeric features, no
+     original string labels. Needs the CSV export
+     (data/X_train_features.csv, data/y_train.csv) to stop dropping the
+     pandas index (remove index=False) so predictions/residuals computed in
+     model_comparison.py can be joined back to the notebook's un-encoded df
+     by index. Not yet applied.
+
+
+OPEN ITEMS / KNOWN ISSUES (not yet fixed)
+============================================
+- Lasso is fragile across target scale: broken pre-Part-3 (log scale),
+  accidentally fine mid-session when the target wasn't log-transformed (real
+  scale), broken again now that the log-transform is restored (item 13).
+  Needs LassoCV or a properly tuned alpha to be a fair, scale-independent
+  entry in compare_models().
+- Predicted mean is ~11% below the real training target's mean due to
+  Jensen's inequality on the exp() retransformation (Part 3 item 14). FIX
+  DESIGNED in Part 5 item 4 (Duan's smearing estimator, mean(exp(residuals))
+  on honest out-of-sample holdout residuals) but NOT YET applied to
+  model_comparison.py.
+- No residual / actual-vs-predicted visualization for the final model.
+  CODE DESIGNED in Part 5 item 5 but NOT YET applied -- the outlet/item-type
+  breakdown also needs the CSV index-preservation fix from that same item
+  before it can be joined back to original labels.
+- The chi-square test mentioned in the original "Filter Methods" markdown
+  (Pearson / LDA / ANOVA / Chi-Square) was never actually implemented anywhere
+  in the notebook -- still an open gap if full coverage of that markdown is
+  wanted.
+- log_Calorie is actually computed via np.sqrt(), not np.log() -- a naming
+  inconsistency noticed in passing, not yet fixed.
+- Item_Visibility has a small but real NEGATIVE correlation with sales
+  (r=-0.087, p=4.9e-13) once the imputation bug was fixed -- counterintuitive
+  (more visible items sell less), not yet explained, just flagged.
