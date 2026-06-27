@@ -1,36 +1,28 @@
-For every milestone, ensure this structure:
+------------------------------
 
-Purpose (why this milestone exists)
-Method (what you did)
-Theory (how it works conceptually)
-Observations (what you saw)
-Implications (why it matters for the next milestone)
+The project I have selected is going to be looking at database of cards for Magic the Gathering (MTG) which involves card details from what the card does, several text information about the card, the artists of the cards, along with price that is updated frequently. I’m interested in this data because I enjoy playing MTG and always wanted a way to marry my card collection to updated prices and query text information to find obscure cards with certain effects. I’m hoping to gather information that can help me determine future prices of the cards (whether they’re trending up or down) and other pieces of information that contribute to the cards price, or if there are any features that can be used to determine/predict whether a new card will be a potential “game breaker”.
 
 
-predictive analytics case study
-Introduction:
-What was the problem being solved?
-Why was this problem important to solve?
-How was the data acquired?
 
-Methods and Results:
-What steps were taken to prepare the data?
-How was this problem solved?
-What modeling techniques were used?
-Why did the team choose the methods/models they did?
-What metrics were used to evaluate the results? Why was this metric chosen?
+The dataset is about ~29k rows with 10 feature variables and 1 target variable (price). To measure the correlation between the categorical feature variables and the continuous target variable I opted to use ANOVA (Analysis of Variance). The prediction of price is going to be handled via tree-based models (random forests) as these models can handle categories natively without needing one-hot encoding, or data preprocessing (Wright & König, 2019). The model fits will be validated using R^2 and Root Mean Squared Error (RMSE).
 
-Conclusion:
-How were the results or model implemented?
-What were the actionable consequences of the case study?
-What did the team learn from the case study?
-How should or would the team approach the problem differently in the future?
 
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
-How do you model? How do you deploy and operationalize a model?
-What is uplift modeling?
-How do you deploy a model? Why is it hard? What do you need to consider?
-How does cost play a role in deploying/operationalizing a model?
-Why should models be rebuilt?
- Discuss five aspects, in terms of predictive analytics, that were critical to the success of the project.
 
+I am hoping that I’m able to find some valuable information that can predict price swings as well as future impact cards that may be included in every deck which would also contribute to future price increases. This exercise can be expanded to other trading card games such as Pokémon and Yu-Gi-Oh to name two.
+
+
+Your project presents an interesting application of data science within the trading card market and demonstrates how predictive analytics can be applied to a hobby-based domain. One of the strengths of your project is that it combines both descriptive and predictive analysis. While predicting card prices is valuable, identifying the characteristics that contribute to long-term value or potential game-changing cards could provide even deeper insights into the market dynamics of Magic: The Gathering.
+
+
+
+I agree with your decision to use Random Forest models for this dataset. Tree-based models are particularly effective when working with mixed data types and complex relationships among variables. In addition, Random Forests can provide feature importance measures that may help identify which card attributes contribute most significantly to price variation. This information could be useful not only for prediction but also for understanding the underlying factors that drive card value.
+
+
+
+One aspect that may be worth considering is the inclusion of historical price trends if that data is available. Trading card prices often fluctuate due to tournament performance, new card releases, changes in game rules, and shifts in player preferences. Incorporating time-related variables may improve predictive performance and provide additional insight into price movement patterns. Furthermore, comparing Random Forest performance against simpler models such as linear regression could help demonstrate the value of more advanced machine learning approaches.
+
+
+
+I also appreciate your observation that the methodology could be expanded to other trading card games such as Pokémon and Yu-Gi-Oh. This highlights the broader applicability of your approach and demonstrates how data science techniques can be transferred across similar domains. Overall, this is a creative and well-structured project with strong potential for generating meaningful insights.
+
+----------
