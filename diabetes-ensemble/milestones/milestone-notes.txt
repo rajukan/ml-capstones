@@ -3,6 +3,26 @@ If you join a competition, write the story of your experience, include the compe
 https://www.kaggle.com/code/gyanraju/indian-medicinal-plants-image-detection-vit/edit
 
 
+------------------------------------------------------------------------------
+
+Write a short article or blog post (250-500 words) about data science on Medium.com. Also comment on someone else's blog or article on Medium.
+Submit your article/blog link along with a formal 250-500 APA-compliant paper with your reflections on the entire process with insight into how you think Medium.com contributes to the data science community.
+
+---------------------------------------
+Portfolio
+
+
+
+For your final portfolio submission, you should be ready to submit your GitHub page or a website that includes About, Work/Projects, and Contact pages. On the Work/Projects page, you should have your list of projects along with a summary of each project (this is usually detail if someone clicks on your project for example) – and the ability to get to your repository for the detailed code.
+Your repository should also be organized with standard naming conventions, working/fully functional and completed projects and be ready for an employer to look over if they wanted to see what your skills are.
+Complete the following activities in Week 11:
+Submit your About, Work, and Contact Sections (can either be separate pages or all on one page)
+Work page should have 10 projects, with summary of each
+Ability to get back to your Repository
+Repository should have organized folders, functional projects, and working code
+
+------------------------------------------------------------------------------
+
 Project Description
 
 You have been a data scientist since the day you began this program. You may not have recognized it, but it’s been there the whole time. In this course, you’re not only going to recognize it, but also show us what you can do.
@@ -374,3 +394,22 @@ The analytical pipeline for this project follows a structured machine learning w
 **Evaluation metric selection for clinical relevance.** Standard ML metrics (accuracy, F1) do not directly map to the clinical utility of a screening tool. Clinicians think in terms of sensitivity (true positive rate — how many heart disease patients does the model catch?), specificity (true negative rate — how many healthy patients does it correctly clear?), and positive/negative predictive value (which depend on disease prevalence in the target population). Translating model performance into these clinically meaningful quantities — and assessing them at the operating threshold that would actually be used in practice — is a non-trivial challenge that requires clinical input.
 
 **Temporal and distributional shift.** Heart disease risk factor profiles change over time (dietary patterns, medication prevalence, obesity rates), and the dataset combines records from different historical time periods across institutions. A model trained on this data may perform differently on patients seen in 2025 compared to patients seen when the original data was collected, particularly for features like Cholesterol (where statin use has dramatically changed the population distribution) and BMI-related risk factors not captured in this dataset.
+
+
+
+
+
+------------
+
+[Applicant’s Full Name]
+[A-Number, if any]
+[Date of Birth]
+[Receipt Number – Form I-765]
+[Address] Date: [MM/DD/YYYY] RE: EXPEDITE REQUEST – FORM I-765 (EMPLOYMENT AUTHORIZATION DOCUMENT) To Whom It May Concern: I respectfully request that U.S. Citizenship and Immigration Services expedite the adjudication of my pending Form I-765, Application for Employment Authorization, pursuant to USCIS expedite criteria outlined in the USCIS Policy Manual, Volume 1, Part A, Chapter 5. Case Information Applicant Name: [Full Name] Receipt Number: [IOE / MSC / LIN / SRC / WAC number] Form Filed: Form I-765 Category: [e.g., (c)(9), (a)(12), (c)(14), etc.] Date Filed: [MM/DD/YYYY] Basis for Expedite Request I am requesting expedited processing based on the following USCIS-recognized criterion (check and tailor as applicable): ☐ Severe Financial Loss to a Person and/or Employer I will suffer severe and immediate financial hardship if my employment authorization is not issued promptly. This hardship is not the result of a failure to timely file and is supported by the evidence enclosed. Specifically: [Describe job loss, job offer at risk, unpaid leave, loss of income] [Explain inability to meet basic living expenses such as rent, utilities, food, medical care] [If applicable, explain impact on employer or third parties] Supporting evidence includes: [Employer letter confirming job loss or conditional offer] [Pay stubs / termination notice / unpaid leave notice] [Rent demand, eviction notice, utility shutoff notice] [Bank statements showing limited funds] ☐ Emergency or Urgent Humanitarian Circumstances My request is based on an urgent humanitarian situation involving my health, safety, or well-being (or that of my dependent/family member), requiring immediate resolution of my employment authorization. Supporting evidence includes: [Doctor or hospital letter describing urgency] [Medical records or treatment plans] [Affidavits or sworn statements explaining vulnerability] ☐ Nonprofit / Government / Public Interest Grounds (Use only if applicable) My employment authorization is urgently required to further nonprofit / governmental / public interest work, and my role is critical and time-sensitive. Supporting evidence includes: [Official letters from nonprofit or government agency] [Explanation of why delay would harm public interest] ☐ Clear USCIS Error (Use only if applicable) This request is based on a clear USCIS error that has directly prevented me from working. Supporting evidence includes: [Incorrect EAD copy] [Approval notices or prior correct documentation] Additional Considerations Due to recent USCIS policy changes, automatic extensions of employment authorization are no longer available in many cases, creating an immediate risk of job loss and financial instability. Without expedited adjudication, I face a complete interruption of lawful employment authorization. I have complied with all filing requirements, attended biometrics (if applicable), and there are no outstanding requests for evidence related to my application. Conclusion For the reasons outlined above and supported by the enclosed documentation, I respectfully request that USCIS exercise its discretion to expedite the adjudication of my pending Form I-765.
+
+Thank you for your time and consideration of this urgent matter. Respectfully submitted, [Applicant’s Full Name]
+[Signature, if submitting as PDF]
+[Phone Number]
+[Email Address]
+
+-----------------
