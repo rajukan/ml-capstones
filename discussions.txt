@@ -26,3 +26,5 @@ One aspect that may be worth considering is the inclusion of historical price tr
 I also appreciate your observation that the methodology could be expanded to other trading card games such as Pokémon and Yu-Gi-Oh. This highlights the broader applicability of your approach and demonstrates how data science techniques can be transferred across similar domains. Overall, this is a creative and well-structured project with strong potential for generating meaningful insights.
 
 ----------
+
+

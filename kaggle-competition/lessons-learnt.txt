@@ -1,0 +1,82 @@
+Predicting Student Health Risk - Lessons Learned / Session Log
+================================================================
+
+Scope: predicting-student-health-risk.ipynb, req.txt
+
+1. Notebook was authored for a Kaggle GPU runtime, not runnable locally
+   - CFG.TRAIN_DATA / TEST_DATA / ORIGINAL_DATA pointed at /kaggle/input/...
+     absolute paths, which don't exist outside a Kaggle notebook session.
+   - `import cupy as cp` (GPU-only array library) was imported unconditionally
+     in the setup cell, so the notebook would fail at import time on any
+     machine without CUDA installed -- before ever reaching the data-loading
+     or modeling cells.
+   - CatBoost was configured with "task_type": "GPU" and XGBoost with
+     "device": "cuda" -- both would raise/fail on a CPU-only machine instead
+     of silently falling back.
+
+2. Fix: repointed data paths to the local data/ folder
+   - Train/test/sample-submission CSVs were downloaded into
+     kaggle-competition/data/ (train.csv, test.csv, sample_submission.csv),
+     plus the "original" augmentation dataset
+     (student_health_dataset_50k.csv) used for extra training rows.
+   - CFG.TRAIN_DATA/TEST_DATA/ORIGINAL_DATA updated to relative paths
+     ("data/train.csv" etc.), so the notebook now runs with
+     kaggle-competition/ as the working directory instead of requiring a
+     Kaggle environment.
+
+3. Fix: made the notebook CPU-only (no CUDA/GPU dependency)
+   - Removed `import cupy as cp` from the imports cell entirely.
+   - train_cv_model()'s `use_gpu_cleanup` parameter and the
+     `cp.get_default_memory_pool().free_all_blocks()` cleanup block it
+     guarded were dropped rather than just disabled -- keeping a flag that
+     would NameError the moment someone flipped it back to True is worse
+     than not having the option at all.
+   - CatBoost's CAT_PARAMS: removed "task_type": "GPU" (CatBoost defaults to
+     CPU when the key is absent).
+   - XGBoost's XGB_PARAMS: changed "device": "cuda" -> "device": "cpu"
+     (kept "tree_method": "hist", which works on both CPU and GPU).
+   - LightGBM's LGB_PARAMS needed no change -- it never set a GPU device to
+     begin with.
+
+4. Fix: populated req.txt with every third-party import actually used in the
+   notebook (numpy, pandas==3.0.0, matplotlib, seaborn, scikit-learn, scipy,
+   statsmodels, pingouin==0.5.5, scikit-posthocs, tabulate, tqdm, colorlog,
+   optuna, catboost, xgboost, lightgbm, ipython), so `pip install -r req.txt`
+   is enough to reproduce the environment. Version pins for pandas/pingouin
+   match the notebook's own `!pip install` cells. Standard-library imports
+   (os, sys, gc, logging, itertools, typing) were excluded -- nothing to
+   install for those.
+
+5. Editing this notebook directly with the NotebookEdit tool wasn't possible
+   -- it requires reading the file first, and the notebook (~65k tokens as
+   raw JSON) exceeds the read tool's token limit even with offset/limit set,
+   so the read always fails before any cell can be targeted. Worked around
+   by treating the .ipynb as a plain JSON text file: parsing it with Python
+   to find exact substrings, then doing a single unique-match str.replace
+   per change and rewriting the file, followed by re-parsing it with
+   json.load to confirm the notebook was still valid after each edit.
+
+6. Going CPU-only (item 3) surfaced a second problem: model training itself
+   is very slow. Root cause is that CAT_PARAMS/XGB_PARAMS were tuned for GPU
+   throughput, not CPU:
+   - CatBoost: iterations=12000, depth=8, early_stopping_rounds=1000.
+   - XGBoost: n_estimators=12000, early_stopping_rounds=1000.
+   - Both run across CFG.N_SPLIT_KFOLD=5 folds, over a ~690,088-row training
+     set (per the EDA markdown cell) -- so up to 5 x 12000 boosting rounds
+     per model, on CPU instead of GPU.
+   - early_stopping_rounds=1000 compounds this: each fold keeps training up
+     to 1000 rounds past its last improvement before quitting, so a fold
+     that plateaus early still burns a lot of extra wall-clock time.
+   - Verified no GPU is present on this machine (`nvidia-smi` not found) and
+     12 CPU cores are available; XGBoost (n_jobs=-1) and LightGBM (n_jobs=-1)
+     already use all cores, and CatBoost defaults to all cores too when
+     thread_count isn't set, so parallelism isn't the bottleneck -- the
+     sheer iteration/depth/fold budget is.
+   - LGB_PARAMS (n_estimators=1000) wasn't flagged as a problem -- it's an
+     order of magnitude lighter than the other two already.
+   - NOT YET FIXED: options discussed but not applied were (a) lowering
+     CatBoost/XGBoost iterations to ~4000 and early_stopping_rounds to
+     ~200, (b) leaving iteration ceilings alone and only dropping
+     early_stopping_rounds to ~200, and (c) also cutting N_SPLIT_KFOLD from
+     5 to 3 to reduce total training runs from 15 to 9. None applied yet --
+     revisit and pick one before the next full training run.

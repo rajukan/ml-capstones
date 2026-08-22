@@ -1,0 +1,997 @@
+For every milestone, ensure this structure:
+
+Purpose (why this milestone exists)
+Method (what you did)
+Theory (how it works conceptually)
+Visuals
+Observations (what you saw)
+Implications (why it matters for the next milestone)
+
+
+predictive analytics case study
+Introduction:
+What was the problem being solved?
+Why was this problem important to solve?
+How was the data acquired?
+
+Methods and Results:
+What steps were taken to prepare the data?
+How was this problem solved?
+What modeling techniques were used?
+Why did the team choose the methods/models they did?
+What metrics were used to evaluate the results? Why was this metric chosen?
+
+Conclusion:
+How were the results or model implemented?
+What were the actionable consequences of the case study?
+What did the team learn from the case study?
+How should or would the team approach the problem differently in the future?
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+How do you model? How do you deploy and operationalize a model?
+What is uplift modeling?
+How do you deploy a model? Why is it hard? What do you need to consider?
+How does cost play a role in deploying/operationalizing a model?
+Why should models be rebuilt?
+ Discuss five aspects, in terms of predictive analytics, that were critical to the success of the project.
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+How do you model? How do you deploy and operationalize a model?
+What is uplift modeling?
+How do you deploy a model? Why is it hard? What do you need to consider?
+How does cost play a role in deploying/operationalizing a model?
+Why should models be rebuilt?
+ Discuss five aspects, in terms of predictive analytics, that were critical to the success of the project.
+
+---Rubrics----
+----
+
+Rubric:The project will be evaluated using these criteria:
+
+    Problem description
+        0 points: Problem is not described
+        1 point: Problem is described in README birefly without much details
+        2 points: Problem is described in README with enough context, so it's clear what the problem is and how the solution will be used
+    EDA
+        0 points: No EDA
+        1 point: Basic EDA (looking at min-max values, checking for missing values)
+        2 points: Extensive EDA (ranges of values, missing values, analysis of target variable, feature importance analysis) For images: analyzing the content of the images. For texts: frequent words, word clouds, etc
+    Model training
+        0 points: No model training
+        1 point: Trained only one model, no parameter tuning
+        2 points: Trained multiple models (linear and tree-based). For neural networks: tried multiple variations - with dropout or without, with extra inner layers or without
+        3 points: Trained multiple models and tuned their parameters. For neural networks: same as previous, but also with tuning: adjusting learning rate, dropout rate, size of the inner layer, etc.
+    Exporting notebook to script
+        0 points: No script for training a model
+        1 point: The logic for training the model is exported to a separate script
+    Reproducibility
+        0 points: Not possitble to execute the notebook and the training script. Data is missing or it's not easiliy accessible
+        1 point: It's possible to re-execute the notebook and the training script without errors. The dataset is committed in the project repository or there are clear instructions on how to download the data
+    Model deployment
+        0 points: Model is not deployed
+        1 point: Model is deployed (with Flask, BentoML or a similar framework)
+    Dependency and enviroment management
+        0 points: No dependency management
+        1 point: Provided a file with dependencies (requirements.txt, pipfile, bentofile.yaml with dependencies, etc)
+        2 points: Provided a file with dependencies and used virtual environment. README says how to install the dependencies and how to activate the env
+    Infra
+        0 points: No containerization
+        1 point: Dockerfile is provided or a tool that creates a docker image is used (e.g. BentoML)
+        2 points: The application is containerized and the README describes how to build a container and how to run it
+    Cloud deployment
+        0 points: No deployment to the cloud
+        1 point: Docs describe clearly (with code) how to deploy the service to cloud or kubernetes cluster (local or remote)
+        2 points: There's code for deployment to cloud or kubernetes cluster (local or remote). There's a URL for testing - or video/screenshot of testing it
+
+-----
+
+----Predictive Analytics Case Study Rubric---
+
+using rubric below, evaluate <filename> , do not add any entries to database,calculate on the fly. no new files or updates to existing files
+Purpose (why this milestone exists)
+Method (what you did)
+Theory (how it works conceptually)
+Visuals
+Observations (what you saw)
+Implications (why it matters)
+
+
+Purpose -> Method -> Theory -> Visuals -> Observations -> Implications -> Execution
+==============================================================================
+1. Problem Definition & Business Context (Purpose) -- 0-3 Points
+   0 points: Problem is not defined.
+   1 point:  Problem is mentioned but lacks business context or objectives.
+   2 points: Problem is clearly described with business relevance and success
+             criteria.
+   3 points: Problem is clearly articulated with business impact, stakeholders,
+             objectives, and justification for why solving it matters.
+------------------------------------------------------------------------------
+2. Data Acquisition & Understanding (Purpose + Method) -- 0-3 Points
+   0 points: No description of data sources.
+   1 point:  Dataset is identified with minimal explanation.
+   2 points: Data source, collection method, and key attributes are explained.
+   3 points: Comprehensive discussion of data provenance, quality, limitations,
+             assumptions, and suitability for the problem.
+------------------------------------------------------------------------------
+3. Data Preparation & EDA (Method) -- 0-3 Points
+   0 points: No preprocessing or exploratory analysis.
+   1 point:  Basic cleaning and summary statistics.
+   2 points: Missing value handling, feature analysis, distributions,
+             correlations, and visualizations.
+   3 points: Extensive EDA with feature engineering, outlier treatment, data
+             quality assessment, and insights influencing modeling decisions.
+------------------------------------------------------------------------------
+4. Visualizations & Analytical Communication (Visuals) -- 0-3 Points
+   0 points: No visualizations, or visualizations are irrelevant, unlabeled,
+             misleading, or provide little analytical value.
+   1 point:  Basic visualizations present (e.g., histograms, bar charts,
+             scatter plots). Charts have titles and labels but primarily
+             describe the data without deeper interpretation or connection
+             to the notebook's objectives.
+   2 points: Visualizations are appropriate for the analysis and support
+             investigation of data, features, model performance, or
+             experimental results. Includes multiple chart types, clear
+             labeling, trend identification, distribution analysis,
+             correlation analysis, and discussion of key observations.
+   3 points: Visualizations are strategically selected to answer specific
+             analytical questions and drive decision-making. Charts are
+             clear, well-designed, and integrated into the narrative.
+             Includes advanced visual analysis such as feature importance,
+             residual analysis, learning curves, confusion matrices, ROC/PR
+             curves, clustering visualizations, error analysis, or
+             comparative experiment visualizations. Visual insights directly
+             influence hypotheses, modeling decisions, and conclusions.
+------------------------------------------------------------------------------
+5. Modeling Approach & Theory (Method + Theory) -- 0-4 Points
+   0 points: No model development.
+   1 point:  Single model with minimal explanation.
+   2 points: Multiple models evaluated with basic rationale.
+   3 points: Multiple models compared with detailed justification based on
+             theory and problem characteristics.
+   4 points: Model selection demonstrates deep understanding of predictive
+             analytics concepts, assumptions, trade-offs, and alternative
+             approaches.
+------------------------------------------------------------------------------
+6. Evaluation & Results (Observations) -- 0-4 Points
+   0 points: No evaluation performed.
+   1 point:  Results reported without metrics justification.
+   2 points: Appropriate metrics reported.
+   3 points: Metrics explained and connected to business objectives.
+   4 points: Comprehensive evaluation including error analysis, feature
+             importance, model limitations, and interpretation of findings.
+------------------------------------------------------------------------------
+7. Deployment & Operationalization (Implications) -- 0-3 Points
+   0 points: No deployment discussion.
+   1 point:  Basic deployment concept described.
+   2 points: Deployment architecture, monitoring, and maintenance
+             considerations discussed.
+   3 points: End-to-end operationalization including scalability, monitoring,
+             retraining strategy, governance, and cost considerations.
+------------------------------------------------------------------------------
+8. Business Impact & Recommendations (Implications) -- 0-3 Points
+   0 points: No discussion of impact.
+   1 point:  General conclusions provided.
+   2 points: Actionable recommendations derived from findings.
+   3 points: Clear business outcomes, ROI considerations, decision support
+             value, and future roadmap presented.
+------------------------------------------------------------------------------
+9. Reflection & Future Improvements (Implications) -- 0-2 Points
+   0 points: No reflection.
+   1 point:  Some limitations or lessons learned discussed.
+   2 points: Thorough discussion of limitations, model drift, retraining needs,
+             alternative approaches, and future enhancements.
+------------------------------------------------------------------------------
+10. Code Export & Reproducibility (Execution) -- 0-2 Points
+   0 points: No script exported from notebook and dataset is missing or
+             not accessible.
+   1 point:  Training logic exported to a standalone script and dataset
+             is committed or download instructions are clearly provided.
+   2 points: Notebook and training script execute without errors end to end.
+             All dependencies are documented in requirements.txt, pipfile,
+             or equivalent. README explains how to install and run.
+------------------------------------------------------------------------------
+11. Containerization & Environment (Execution) -- 0-2 Points
+    0 points: No dependency management and no containerization.
+    1 point:  Dockerfile or equivalent provided. Dependencies file included.
+              Virtual environment setup documented in README.
+    2 points: Application is fully containerized. README describes how to
+              build the container and run it locally end to end.
+------------------------------------------------------------------------------
+12. Cloud Deployment & Live Testing (Execution) -- 0-2 Points
+    0 points: No cloud deployment.
+    1 point:  Documentation clearly describes how to deploy to cloud or
+              Kubernetes cluster with code examples.
+    2 points: Application is deployed to cloud or Kubernetes. A live URL,
+              screenshot, or video demonstrates the working deployment.
+==============================================================================
+CRITICAL PREDICTIVE ANALYTICS FACTORS (Bonus Discussion)
+Evaluate whether the project demonstrates:
+   1. Business understanding
+   2. Data quality management
+   3. Feature engineering
+   4. Model selection and evaluation
+   5. Deployment and monitoring strategy
+   6. Reproducibility and environment management
+   7. Production readiness and cloud operationalization
+==============================================================================
+
+
+Problem Definition & Business Context      x
+Data Acquisition & Understanding           x
+Data Preparation & EDA                     x
+Visuals 			           x
+Modeling Approach & Theory                 x
+Evaluation & Results                       x
+Deployment & Operationalization            x
+Business Impact & Recommendations          x
+Reflection & Future Improvements           x
+Code Export & Reproducibility              x
+Containerization & Environment             x
+Cloud Deployment & Live Testing            x
+-----------------------------------------
+TOTAL SCORE: 100 Points
+
+
+
+---------individual rubrics--------------
+
+
+---EDA rubric-----
+
+READ AND ANALYZE THE EXPLORATORY DATA ANALYSIS (EDA)
+FROM THE PERSPECTIVE OF A SENIOR / PRINCIPAL MACHINE LEARNING ENGINEER.
+
+Your goal is not to describe what was done.
+
+Your goal is to evaluate:
+
+* Why the EDA was performed
+* Whether the right questions were asked
+* Whether the evidence supports the conclusions
+* Whether the findings influence downstream ML decisions
+
+For every EDA section, continuously ask:
+
+* SO WHAT? (Why does this matter?)
+* WHY? (Why does this pattern exist?)
+* HOW? (How was this conclusion reached?)
+* WHAT IF THIS IS WRONG? (What assumptions could fail?)
+
+==============================================================================
+EDA ANALYSIS TEMPLATE
+=====================
+
+1. PURPOSE (SO WHAT?)
+
+---
+
+* Why was this EDA activity performed?
+* What business or ML question is being investigated?
+* What uncertainty is being reduced?
+* What decision should this analysis influence?
+
+Examples:
+
+* Data quality assessment
+* Feature suitability
+* Class imbalance detection
+* Distribution analysis
+* Outlier investigation
+* Feature selection
+
+---
+
+2. WHAT WAS ANALYZED?
+
+---
+
+Describe ONLY the evidence examined.
+
+Examples:
+
+* Missing values
+* Distributions
+* Correlations
+* Target variable
+* Feature interactions
+* Categorical frequencies
+* Outliers
+* Time trends
+
+No interpretation yet.
+
+---
+
+3. KEY OBSERVATIONS
+
+---
+
+Observation 1
+Observation 2
+Observation 3
+
+Focus on:
+
+* distributions
+* skew
+* variance
+* imbalance
+* correlations
+* anomalies
+* outliers
+* feature relationships
+* data quality issues
+
+Only report observations directly supported by evidence.
+
+---
+
+4. MACHINE LEARNING INTERPRETATION (WHY?)
+
+---
+
+* What statistical concepts explain the observations?
+* What ML concepts are relevant?
+
+Examples:
+
+* Class imbalance
+
+* Data leakage
+
+* Multicollinearity
+
+* Covariate shift
+
+* Sampling bias
+
+* Feature redundancy
+
+* Target leakage
+
+* Distribution mismatch
+
+* What assumptions are confirmed?
+
+* What assumptions are challenged?
+
+---
+
+5. SO WHAT? (ENGINEERING IMPLICATIONS)
+
+---
+
+* Why does this matter for modeling?
+* What modeling decisions should change because of this?
+* What preprocessing decisions should change?
+* What risks should be mitigated?
+
+Examples:
+
+* Feature removal
+* Feature transformation
+* Resampling
+* Normalization
+* Encoding strategy
+* Data collection improvements
+
+---
+
+6. VALIDITY CHECK (HOW?)
+
+---
+
+Critically evaluate:
+
+* Was the correct EDA technique used?
+* Is the evidence sufficient?
+* Could the conclusion be misleading?
+* Are important analyses missing?
+* Are assumptions explicitly tested?
+
+---
+
+7. RISKS / FAILURE MODES
+
+---
+
+* What could go wrong if these findings are accepted blindly?
+* What hidden assumptions exist?
+* What sources of bias remain?
+
+Examples:
+
+* Sampling bias
+* Data leakage
+* Survivorship bias
+* Measurement bias
+* Selection bias
+
+---
+
+8. RECOMMENDED NEXT STEPS
+
+---
+
+* Additional EDA
+* Additional data collection
+* Feature engineering opportunities
+* Statistical testing
+* Validation activities
+
+---
+
+9. SENIOR ML ENGINEER INSIGHT
+
+---
+
+What would an experienced ML engineer immediately notice?
+
+* Subtle risk
+* Missing analysis
+* Hidden opportunity
+* Non-obvious insight
+
+==============================================================================
+
+# SCORING RUBRIC (0-10 EACH)
+
+1. Problem Relevance
+
+* Does the EDA address meaningful ML questions?
+
+2. Analytical Clarity
+
+* Is the purpose of the analysis clear?
+
+3. Data Understanding
+
+* Depth of understanding demonstrated about the dataset.
+
+4. Statistical Correctness
+
+* Are statistical concepts applied correctly?
+
+5. Feature Engineering Insight
+
+* Does the EDA uncover actionable feature opportunities?
+
+6. Risk Awareness
+
+* Identification of data quality issues, leakage, bias, drift, etc.
+
+7. Actionability
+
+* Can the findings influence modeling decisions?
+
+8. Depth of Interpretation
+
+* Goes beyond description to explain WHY.
+
+9. Completeness of Investigation
+
+* Are important EDA dimensions covered?
+
+10. ML Relevance
+
+* Direct usefulness for predictive modeling.
+
+TOTAL EDA SCORE: ___ / 100
+
+---
+
+SCORE JUSTIFICATION (MANDATORY)
+
+For each category:
+
+* Evidence supporting the score
+* What is missing
+* What could be improved
+
+---
+
+CORE PHILOSOPHY
+
+A senior ML engineer does not ask:
+
+"What patterns exist in the data?"
+
+They ask:
+
+"What modeling decisions does this analysis enable, and what risks remain if those decisions are wrong?"
+
+--------------Model rubric----------
+
+READ AND ANALYZE THE MODELING APPROACH
+FROM THE PERSPECTIVE OF A SENIOR / PRINCIPAL MACHINE LEARNING ENGINEER.
+
+Your goal is not to describe the model.
+
+Your goal is to evaluate:
+
+* Why the model was chosen
+* Whether the modeling assumptions are valid
+* Whether the approach matches the problem
+* Whether alternative approaches were considered
+* Whether the modeling decisions are theoretically justified
+
+For every modeling decision, continuously ask:
+
+* SO WHAT? (Why this model?)
+* WHY? (Why should this work?)
+* HOW? (How was this validated?)
+* WHAT IF THIS IS WRONG? (What assumptions could fail?)
+
+==============================================================================
+MODELING ANALYSIS TEMPLATE
+==========================
+
+1. PURPOSE (SO WHAT?)
+
+---
+
+* What prediction problem is being solved?
+* Why is modeling needed?
+* What decision will this model support?
+* What business or operational objective does it address?
+
+---
+
+2. MODELING APPROACH
+
+---
+
+Describe ONLY what was done.
+
+Examples:
+
+* Linear Regression
+* Logistic Regression
+* Random Forest
+* XGBoost
+* SVM
+* Neural Network
+* Ensemble Learning
+
+Include:
+
+* Features used
+* Target variable
+* Train/test strategy
+* Hyperparameter tuning approach
+
+No interpretation yet.
+
+---
+
+3. THEORY (WHY?)
+
+---
+
+Explain the theoretical basis.
+
+Examples:
+
+* Linearity assumptions
+* Bias-Variance Tradeoff
+* Tree-based learning
+* Regularization
+* Ensemble theory
+* Gradient boosting
+* Distance-based learning
+
+Questions:
+
+* Why should this model work?
+* What assumptions does it make?
+* Are those assumptions reasonable?
+
+---
+
+4. KEY OBSERVATIONS
+
+---
+
+Observation 1
+Observation 2
+Observation 3
+
+Examples:
+
+* Model complexity
+* Feature importance patterns
+* Overfitting indicators
+* Underfitting indicators
+* Training behavior
+
+---
+
+5. MACHINE LEARNING INTERPRETATION
+
+---
+
+* What do the modeling choices imply?
+* Why was one model preferred over another?
+* What tradeoffs were accepted?
+
+Examples:
+
+* Accuracy vs Interpretability
+* Bias vs Variance
+* Simplicity vs Complexity
+* Speed vs Performance
+
+---
+
+6. VALIDITY CHECK (HOW?)
+
+---
+
+Critically evaluate:
+
+* Is the chosen model appropriate?
+* Were assumptions tested?
+* Was data leakage prevented?
+* Was hyperparameter tuning performed correctly?
+* Were alternatives considered?
+
+---
+
+7. RISKS / FAILURE MODES
+
+---
+
+Examples:
+
+* Overfitting
+* Underfitting
+* Leakage
+* High variance
+* Poor calibration
+* Lack of interpretability
+
+---
+
+8. RECOMMENDED NEXT STEPS
+
+---
+
+* Alternative models
+* Better tuning strategy
+* Additional features
+* More data
+* Improved validation
+
+---
+
+9. SENIOR ML ENGINEER INSIGHT
+
+---
+
+What would an experienced ML engineer immediately notice?
+
+* Missing comparison
+* Incorrect assumption
+* Hidden opportunity
+* Modeling weakness
+
+==============================================================================
+
+# SCORING RUBRIC (0-10 EACH)
+
+1. Problem-Model Alignment
+2. Theoretical Correctness
+3. Model Selection Rationale
+4. Assumption Awareness
+5. Hyperparameter Strategy
+6. Feature Utilization
+7. Risk Awareness
+8. Alternative Approach Consideration
+9. Engineering Soundness
+10. ML Maturity
+
+TOTAL MODELING SCORE: ___ / 100
+
+---
+
+CORE PHILOSOPHY
+
+A senior ML engineer does not ask:
+
+"Did the model perform well?"
+
+They ask:
+
+"Why should this model perform well, and under what conditions will it fail?"
+
+---------------Evaluation Rubric-------
+
+READ AND ANALYZE THE MODEL EVALUATION AND RESULTS
+FROM THE PERSPECTIVE OF A SENIOR / PRINCIPAL MACHINE LEARNING ENGINEER.
+
+Your goal is not to report metrics.
+
+Your goal is to evaluate:
+
+* Whether the model was evaluated correctly
+* Whether conclusions are supported by evidence
+* Whether performance is meaningful
+* Whether risks and limitations are understood
+
+For every reported result, continuously ask:
+
+* SO WHAT? (Why does this metric matter?)
+* WHY? (Why did the model achieve this result?)
+* HOW? (How was this measured?)
+* WHAT IF THIS IS WRONG? (What evaluation weaknesses exist?)
+
+==============================================================================
+EVALUATION ANALYSIS TEMPLATE
+============================
+
+1. PURPOSE (SO WHAT?)
+
+---
+
+* What question is the evaluation trying to answer?
+* What decision should these results support?
+* What constitutes success?
+
+---
+
+2. EVALUATION APPROACH
+
+---
+
+Describe ONLY what was done.
+
+Examples:
+
+* Train/Test Split
+* Cross Validation
+* Holdout Validation
+* Time Series Validation
+
+Metrics:
+
+* Accuracy
+* Precision
+* Recall
+* F1
+* ROC-AUC
+* PR-AUC
+* RMSE
+* MAE
+* MAPE
+
+No interpretation yet.
+
+---
+
+3. THEORY (WHY?)
+
+---
+
+* Why are these metrics appropriate?
+* What does each metric measure?
+* What assumptions exist?
+
+Questions:
+
+* Are the metrics aligned with business goals?
+* Are they aligned with the prediction task?
+
+---
+
+4. KEY OBSERVATIONS
+
+---
+
+Observation 1
+Observation 2
+Observation 3
+
+Examples:
+
+* Strong precision
+* Weak recall
+* Calibration issues
+* Error concentration
+* Performance variability
+
+---
+
+5. MACHINE LEARNING INTERPRETATION
+
+---
+
+* What does the performance imply?
+* What tradeoffs are visible?
+* What behavior is revealed?
+
+Examples:
+
+* False positive sensitivity
+* False negative sensitivity
+* Generalization quality
+* Robustness
+
+---
+
+6. VALIDITY CHECK (HOW?)
+
+---
+
+Critically evaluate:
+
+* Was evaluation methodology appropriate?
+* Was cross-validation used correctly?
+* Was leakage avoided?
+* Were metrics interpreted correctly?
+* Is performance statistically meaningful?
+
+---
+
+7. RISKS / FAILURE MODES
+
+---
+
+Examples:
+
+* Overfitting
+* Data leakage
+* Metric misuse
+* Class imbalance masking
+* Evaluation bias
+
+---
+
+8. RECOMMENDED NEXT STEPS
+
+---
+
+* Additional metrics
+* Error analysis
+* Segment analysis
+* Calibration testing
+* Drift testing
+
+---
+
+9. SENIOR ML ENGINEER INSIGHT
+
+---
+
+What would an experienced ML engineer immediately notice?
+
+* Misleading metric
+* Missing validation
+* Hidden weakness
+* Unsupported conclusion
+
+==============================================================================
+
+# SCORING RUBRIC (0-10 EACH)
+
+1. Metric Selection
+2. Evaluation Methodology
+3. Statistical Rigor
+4. Business Alignment
+5. Error Analysis Quality
+6. Generalization Assessment
+7. Risk Awareness
+8. Interpretation Quality
+9. Evidence-Based Conclusions
+10. Actionability
+
+TOTAL EVALUATION SCORE: ___ / 100
+
+---
+
+CORE PHILOSOPHY
+
+A senior ML engineer does not ask:
+
+"What metrics did the model achieve?"
+
+They ask:
+
+"Do these results provide enough evidence to trust this model in the real world?"
+
+
+
+-----Visuals Rubric-------
+
+Read and analyze all images in this notebook from the perspective of a Senior / Principal Machine Learning Engineer reviewing technical work.
+Your goal is not description. Your goal is technical judgment, rigor, and decision quality.
+Focus only on images.
+
+IMAGE 
+================================================================================
+
+1. VISUALIZATION TYPE
+- Type of plot (e.g., histogram, bar chart, ROC curve, confusion matrix):
+- Intended analytical purpose (e.g., distribution check, model comparison):
+
+---
+
+2. PURPOSE (SO WHAT?)
+- Why does this visualization exist?
+- What question is it trying to answer?
+- What decision should it influence in an ML pipeline?
+
+---
+
+3. WHAT IT SHOWS (GROUND TRUTH ONLY)
+Describe ONLY what is directly visible:
+
+axes
+variables
+distributions
+relationships
+structure
+
+No interpretation yet.
+---
+
+4. KEY OBSERVATIONS (What do we actually see?)
+Pattern 1
+Pattern 2
+Pattern 3
+
+Focus on:
+
+distributions
+clusters
+skew
+variance
+separation
+anomalies
+trends
+
+---
+
+5. MACHINE LEARNING INTERPRETATION (WHY?)
+- What statistical or ML concept explains this?
+- What does this imply about data or model behavior?
+- What assumptions are supported or challenged?
+
+---
+6. RECOMMENDED NEXT STEPS
+- What should be done next?
+
+---
+7. SENIOR ML ENGINEER INSIGHT
+- What would an experienced ML engineer immediately notice?
+- Subtle risk or missing piece:
+- Non-obvious insight:
+
+---
+================================================================================
+SCORING RUBRIC (0-10 EACH)
+================================================================================
+
+1. Analytical Clarity:
+2. Statistical Correctness:
+3. ML Relevance:
+4. Depth of Interpretation:
+5. Risk Awareness:
+6. Actionability:
+7. Gestalt's principles:
+
+TOTAL IMAGE SCORE: ___ / 70
+
+---
+Score Justification (Mandatory)
+For each category:
+What evidence supports this score?
+What is missing or weak?
+
+---
+Core Philosophy
+A senior ML engineer does not ask:
+“What does this chart show?”
+They ask:
+“What decision does this enable, and how might it fail?”
+---
